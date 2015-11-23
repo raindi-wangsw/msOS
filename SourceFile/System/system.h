@@ -67,6 +67,7 @@ typedef enum
 #include "os.h"
 #include "gui.h"
 #include "device.h"  
+#include "modbus.h"
 #include "data.h"
 
 
@@ -197,6 +198,11 @@ typedef struct
             void (*Write)(byte * dataPointer, int sum);
         }Usart1;
 
+        struct Usart2
+        {
+            void (*Register)(uint txdAddress, uint rxdFucntionAddress);
+            void (*Write)(byte * dataPointer, int sum);
+        }Usart2;
         
         struct Timer
         {

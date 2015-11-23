@@ -348,7 +348,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\SourceFile;..\SourceFile\App;..\SourceFile\System;..\SourceFile\System\OS;..\SourceFile\System\GUI;..\SourceFile\System\Device;..\SourceFile\System\Device\Drive;..\SourceFile\System\Device\Drive\CMSIS;..\SourceFile\System\Device\Drive\LIB\inc</IncludePath>
+              <IncludePath>..\SourceFile;..\SourceFile\App;..\SourceFile\System;..\SourceFile\System\OS;..\SourceFile\System\GUI;..\SourceFile\System\Modbus;..\SourceFile\System\Device;..\SourceFile\System\Device\Drive;..\SourceFile\System\Device\Drive\CMSIS;..\SourceFile\System\Device\Drive\LIB\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -441,6 +441,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>System.Modbus</GroupName>
+          <Files>
+            <File>
+              <FileName>modbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Modbus\modbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus_slave.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Modbus\modbus_slave.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>System.Device</GroupName>
           <Files>
             <File>
@@ -502,6 +517,11 @@
               <FileName>device_usart1.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SourceFile\System\Device\device_usart1.c</FilePath>
+            </File>
+            <File>
+              <FileName>device_usart2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\device_usart2.c</FilePath>
             </File>
             <File>
               <FileName>device_misc.c</FileName>

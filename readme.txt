@@ -126,6 +126,11 @@ V1.0.1.20151111_Release
 V1.0.2.20151123_Release
 1、修改system.h中数据类型转换的的宏定义名字，Byte3,Ushort1,Float等，简单易用，此外为后续添加Modbus协议调整
 
+V1.1.0.20151123_Release
+1、增加Modbus Slave，配套Host为步科的HMI屏(ET070),显示参数有Frequency(4x,DWORD)、Voltage(2x,WORD)、Current(2x,WORD)、OnOff(0x,bool)。
+2、USART2作为Modbus Slave的通讯端口,发送采用DMA，接收采用中断，成帧采用系统节拍超时。
+3、本地数据与HMI屏交互采用0x、1x、3x、4x数据类型的四个数组，数组的序号就是数据的地址，序号0对应数据地址1，依次类推。
+4、默认本设备客户端地址为1
 
 
 

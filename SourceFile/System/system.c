@@ -97,6 +97,7 @@ static void Init(void)
     InitGui();
 	InitOs();
     InitDevice();
+    InitModbus();
 }
 
 SystemStruct System = 

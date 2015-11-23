@@ -33,6 +33,8 @@
 
 extern void InitUsart1(void);
 
+extern void InitUsart2(void);
+
 extern void InitAdc(void);
 
 extern void InitDI(void);
@@ -56,6 +58,8 @@ extern void InitSystick(void);
 void InitDevice(void)
 {    
     InitUsart1();	
+    
+    InitUsart2();
 
     InitAdc();
 
