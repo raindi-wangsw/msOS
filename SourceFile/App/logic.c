@@ -132,7 +132,7 @@ void KeyProcess(KeyEnum key)
             break;   
  
         case KeyStart:              // 开始运行
-            App.Data.OnOff = "开";
+            App.Data.OnOff = on;
             break;
         case KeyLongStart:          // 定时器(测试)
             System.Device.Timer.Start(0, TimerMessage, 1000, FormFocusProcess);
@@ -146,7 +146,7 @@ void KeyProcess(KeyEnum key)
             break;
             
         case KeyStop:               //停止运行
-            App.Data.OnOff = "关";
+            App.Data.OnOff = off;
         case KeyLongStop:
             //...
             StopDefaultProcess();
@@ -192,8 +192,8 @@ void LogicTask(void)
     {     
         message = System.OS.PendMessageQueue();
         
-        data = GetMessageData(message);
-        switch(GetMessageType(message))
+        data = message & 0x00FFFFFF;
+        switch(Byte3(message))
         {
             case MessageKey:                    //按键消息
                 KeyProcess((KeyEnum)data);

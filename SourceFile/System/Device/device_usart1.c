@@ -17,7 +17,7 @@
 *                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
-*文件名     : device_usart.c
+*文件名     : device_usart1.c
 *作用       : 串口设备
 *原理       : 发送采用Buffer发送，接收采用App注册函数方式接收
 ********************************************************************************
@@ -112,7 +112,7 @@ int fputc(int ch, FILE *f)
 /*******************************************************************************
 * 描述	    : 系统节拍1000/S,即1mS一次调用此服务程序发送缓冲区数据
 *******************************************************************************/
-void UsartSystick1000Routine(void) 
+void Usart1Systick1000Routine(void) 
 {
     if (Txd1Queue.Entries == 0) return;
 
@@ -182,7 +182,7 @@ void InitUsart1(void)
 //Usart1 NVIC 配置
     NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=3;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
 
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
     NVIC_Init(&NVIC_InitStructure);	

@@ -103,7 +103,7 @@ static void ReadAllParameter(void)
         if (CellBlock[i].Address != 0xFFFFFFFF)
         {
             AddressBlock[i] = CellBlock[i].Address;             // 备份页面到临时数组中
-            GetUintFrom(AddressBlock[i]) = CellBlock[i].Data;   // 初始化数据库数据
+            pUint(AddressBlock[i]) = CellBlock[i].Data;   // 初始化数据库数据
         }
         else
             break;
@@ -143,7 +143,7 @@ static void ReadAllParameter(void)
                 if (AddressBlock[i] == 0) continue;
                 
                 cell.Address = AddressBlock[i];
-                cell.Data = GetUintFrom(AddressBlock[i]);
+                cell.Data = pUint(AddressBlock[i]);
                 
                 FLASH_ProgramWord((uint)(&CellBlock[j].Address), cell.Address);
                 FLASH_ProgramWord((uint)(&CellBlock[j].Data), cell.Data);

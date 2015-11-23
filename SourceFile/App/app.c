@@ -46,7 +46,7 @@ static void InitData(void)
     App.Data.Voltage = 99;
     App.Data.Current = 101;
     App.Data.Temperature = 25;
-    App.Data.OnOff = "นุ";
+    App.Data.OnOff = on;
     
     
     App.Data.MaxPower = 6000;
@@ -65,9 +65,9 @@ static void InitData(void)
     App.Data.Month = 9;
     App.Data.Day = 11;
 
-    App.Data.IdentifyNumber0 = GetUintFrom(IdentifyNumberAddress);
-    App.Data.IdentifyNumber1 = GetUintFrom(IdentifyNumberAddress + 4);
-    App.Data.IdentifyNumber2 = GetUintFrom(IdentifyNumberAddress + 8);
+    App.Data.IdentifyNumber0 = pUint(IdentifyNumberAddress);
+    App.Data.IdentifyNumber1 = pUint(IdentifyNumberAddress + 4);
+    App.Data.IdentifyNumber2 = pUint(IdentifyNumberAddress + 8);
 
     App.Menu.FocusFormPointer = (Form *)0;
 }

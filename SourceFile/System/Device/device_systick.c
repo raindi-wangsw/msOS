@@ -37,7 +37,7 @@ extern void RtcSystick100Routine(void);
 
 extern void TimerSystick1000Routine(void);
 
-extern void UsartSystick1000Routine(void);
+extern void Usart1Systick1000Routine(void);
 
 extern void AdcSystick10000Routine(void);
 
@@ -116,7 +116,7 @@ void SysTick_Handler(void)
         case 3: Systick1000RegisterPointerBlock[3](); break;
         case 4: Systick100RegisterPointerBlock[div]();break;
         case 5: AppDataPointer->Systick1000++;        break;
-        case 6: UsartSystick1000Routine();            break;
+        case 6: Usart1Systick1000Routine();           break;
         case 7: TimerSystick1000Routine();            break;
         case 8:                                       break;
         case 9:

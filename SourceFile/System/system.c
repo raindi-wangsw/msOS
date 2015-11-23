@@ -80,7 +80,7 @@ byte HexToAscii(byte hex)
 *******************************************************************************/
 void PostMessage(MessageEnum message, uint data)
 {
-    GetByte3FromUint(data) = message;
+    Byte3(data) = message;
     System.OS.PostMessageQueue(data);	
 }
 

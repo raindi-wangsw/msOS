@@ -73,8 +73,8 @@ typedef enum
 
 
 
-//#define LCD12864
-#define msMenu
+#define LCD12864
+//#define msMenu
 
 #define true                        1
 #define false                       0
@@ -95,23 +95,23 @@ typedef enum
 #define ResetBit(data, offset)      ((data) &= ~(1U << (offset)))   // 复位
 #define GetBit(data, offset)        (((data) >> (offset)) & 0x01)   // 获取位
 
-#define GetByte0FromUint(data)      ((byte *)(&(data)))[0]
-#define GetByte1FromUint(data)      ((byte *)(&(data)))[1]
-#define GetByte2FromUint(data)      ((byte *)(&(data)))[2]
-#define GetByte3FromUint(data)      ((byte *)(&(data)))[3]
+#define Byte0(data)                 ((byte *)(&(data)))[0]
+#define Byte1(data)                 ((byte *)(&(data)))[1]
+#define Byte2(data)                 ((byte *)(&(data)))[2]
+#define Byte3(data)                 ((byte *)(&(data)))[3]
 
-#define GetUshort0FromUint(data)    ((ushort *)(&(data)))[0]
-#define GetUshort1FromUint(data)    ((ushort *)(&(data)))[1]
+#define Ushort0(data)               ((ushort *)(&(data)))[0]
+#define Ushort1(data)               ((ushort *)(&(data)))[1]
 
-#define GetFloatFromUint(data)      *(float *)(&data)
+#define Byte(data)                  *((byte *)(&data)) 
+#define Ushort(data)                *((ushort *)(&data)) 
+#define Uint(data)                  *((uint *)(&data)) 
+#define Float(data)                 *(float *)(&data)
 
-#define GetMessageType(data)        GetByte3FromUint(data)
-#define GetMessageData(data)        (data & 0x00FFFFFF)
-
-#define GetByteFrom(address)        *((byte *)(address)) 
-#define GetUshortFrom(address)      *((ushort *)(address)) 
-#define GetUintFrom(address)        *((uint *)(address)) 
-#define GetFloatFrom(address)        *((float *)(address)) 
+#define pByte(address)              *((byte *)(address)) 
+#define pUshort(address)            *((ushort *)(address)) 
+#define pUint(address)              *((uint *)(address)) 
+#define pFloat(address)             *(float *)(address)
 
 #define Assert(express)  if (!(express)){printf("\nASSERT: " #express "\n");}   //(void)0
  				  
@@ -196,6 +196,7 @@ typedef struct
             bool (*WriteByte)(byte data);
             void (*Write)(byte * dataPointer, int sum);
         }Usart1;
+
         
         struct Timer
         {

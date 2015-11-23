@@ -75,7 +75,12 @@ static Label Adc1Label;
 static Label Adc2Label;
 static Label Adc3Label;
 
-const string StateString[5] = 
+const string OnOffString[] =
+{
+    "关", "开"
+};
+
+const string StateString[] = 
 {
     "开机扫频",
     "正常待机",
@@ -101,8 +106,8 @@ void InitMenu(void)
     System.Gui.Form.Init(&App.Menu.LogoForm);
     App.Menu.LogoForm.BackTextPointer = "    雨滴科技    "
                                         "      msOS      "
-                                        "     V1.0.1     "
-                                        "   2015.11.11   ";
+                                        "     V1.0.2     "
+                                        "   2015.11.23   ";
 // Check Form
     System.Gui.Form.Init(&App.Menu.CheckForm);
     CheckChart.Character = '*';
@@ -164,8 +169,9 @@ void InitMenu(void)
 
     System.Gui.Form.AddLabel(&App.Menu.WorkForm, &OnOffLabel);
     OnOffLabel.DataPointer = (void *)(&App.Data.OnOff);
-    OnOffLabel.Type = GuiDataTypeString;
+    OnOffLabel.Type = GuiDataTypeSnString;
     OnOffLabel.Align = GuiDataAlignRight;
+    OnOffLabel.StringBlockPointer = OnOffString;
     OnOffLabel.X = 15;
     OnOffLabel.Y = 3;
     
@@ -221,10 +227,10 @@ void InitMenu(void)
     MaxPressTextBox.DataPointer = (void *)(&App.Data.MaxPress);
     MaxPressTextBox.Type = GuiDataTypeFloatDec;
     MaxPressTextBox.Digits = 1;
-    GetFloatFromUint(MaxPressTextBox.DataMax) = 5.0;
-    GetFloatFromUint(MaxPressTextBox.DataMin) = 1.0;
-    GetFloatFromUint(MaxPressTextBox.DataStep) = 0.1;
-    GetFloatFromUint(MaxPressTextBox.DataBigStep) = 0.5;
+    Float(MaxPressTextBox.DataMax) = 5.0;
+    Float(MaxPressTextBox.DataMin) = 1.0;
+    Float(MaxPressTextBox.DataStep) = 0.1;
+    Float(MaxPressTextBox.DataBigStep) = 0.5;
     MaxPressTextBox.X = 7;
     MaxPressTextBox.Y = 2; 
 

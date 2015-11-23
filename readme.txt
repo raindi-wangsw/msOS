@@ -123,6 +123,8 @@ V1.0.0.20151003_Release
 V1.0.1.20151111_Release
 1、改进device_usart1的数据发送问题，发送队列成员Entries存在双写入源，因数据回写问题导致非原子操作，会导致Entries数据错误而引起串口数据发送问题。
 
+V1.0.2.20151123_Release
+1、修改system.h中数据类型转换的的宏定义名字，Byte3,Ushort1,Float等，简单易用，此外为后续添加Modbus协议调整
 
 
 

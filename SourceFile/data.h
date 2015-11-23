@@ -37,7 +37,7 @@ typedef struct
     int Voltage;
     int Current;
     int Temperature;  
-    string OnOff;    
+    int OnOff;    
 
     int MaxPower;
     int MaxTemperature;

@@ -517,10 +517,10 @@ ProcUint:   switch(key)
 //单精度浮点数
         case GuiDataTypeFloatDec:
             f32 = * (float *)(textBoxPointer->DataPointer);
-            f32Max = GetFloatFromUint(textBoxPointer->DataMax);
-            f32Min = GetFloatFromUint(textBoxPointer->DataMin);
-            f32Step = GetFloatFromUint(textBoxPointer->DataStep);       
-            f32BigStep = GetFloatFromUint(textBoxPointer->DataBigStep);
+            f32Max = Float(textBoxPointer->DataMax);
+            f32Min = Float(textBoxPointer->DataMin);
+            f32Step = Float(textBoxPointer->DataStep);       
+            f32BigStep = Float(textBoxPointer->DataBigStep);
             
             switch(key)
             {
