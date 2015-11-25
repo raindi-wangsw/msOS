@@ -31,15 +31,15 @@
 #include "drive.h"
 #include "system.h"
 
-#define PinBeep PaOut(1)
+#define PinBeep PaOut(4)
 
-#define PinX0	PbOut(4)
-#define PinX1	PbOut(5)
+#define PinX0	PbOut(5)
+#define PinX1	PbOut(4)
 
 #define PinY0	PcIn(10)
 #define PinY1	PcIn(11)
 #define PinY2	PcIn(12)
-#define PinY3	PbIn(3)
+#define PinY3	PdIn(2)
 
 #define ShortInterval       4		// 短按按键间隔，不得低于3
 #define LongInterval        40		// 长按按键间隔
@@ -191,8 +191,9 @@ void KeySystick100Routine(void)
 void InitKey(void)
 {
  	GPIO_InitTypeDef GPIO_InitStructure;
-    
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
+
  	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable,ENABLE);
 	PinX1 = 0;
 	PinX0 = 1;
@@ -201,19 +202,18 @@ void InitKey(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
  	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_3;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
     
-    PinBeep = 0;  
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+ 	GPIO_Init(GPIOD, &GPIO_InitStructure);
+    
+    PinBeep = 0; 
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
  	GPIO_Init(GPIOA, &GPIO_InitStructure);

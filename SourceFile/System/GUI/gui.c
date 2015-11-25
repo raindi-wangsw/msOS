@@ -143,7 +143,7 @@ static void LabelToGuiLcd(Label * labelPointer)
             break;
 
         case GuiDataTypeSnString:
-            u32 = *((uint *)(labelPointer->DataPointer));
+            u32 = *((byte *)(labelPointer->DataPointer));
             string = labelPointer->StringBlockPointer[u32];
             len = strlen(string);
             if(labelPointer->Align == GuiDataAlignRight) x = x + 1 - len;
@@ -235,8 +235,8 @@ static void ParseTextBox(void)
     {
         if (FocusFormPointer->FocusTextBoxPointer == textBoxPointer)
         {
-            if(++Counter == 4) Counter = 0;
-            if (Counter < 2)
+            if(++Counter == 8) Counter = 0;
+            if (Counter < 4)
             {
                 textBoxPointer = textBoxPointer->NextTextBoxPointer;
                 continue;

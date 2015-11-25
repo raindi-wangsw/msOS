@@ -608,6 +608,21 @@
               <FileType>1</FileType>
               <FilePath>..\SourceFile\System\Device\Drive\LIB\src\stm32f10x_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\Drive\LIB\src\stm32f10x_bkp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\Drive\LIB\src\stm32f10x_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\Drive\LIB\src\stm32f10x_pwr.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

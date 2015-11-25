@@ -33,14 +33,19 @@ static void Config(DoModeEnum mode)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
     
     
     
     if (mode == DoY)
     {
-        GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+        GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_7;
+    	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+     	GPIO_Init(GPIOA, &GPIO_InitStructure);
+        
+        GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
     	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
      	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -49,6 +54,11 @@ static void Config(DoModeEnum mode)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+        
+        GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_7;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(GPIOA, &GPIO_InitStructure); 
         
         GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
@@ -65,9 +75,9 @@ static void Config(DoModeEnum mode)
     
 static void PortRegister(void)
 {
-    AppDataPointer->DO.pY0 = (uint *)BitBand(GPIOB_ODR_ADDR, 0);   
-    AppDataPointer->DO.pY1 = (uint *)BitBand(GPIOB_ODR_ADDR, 1);
-    AppDataPointer->DO.pY2 = (uint *)BitBand(GPIOB_ODR_ADDR, 12);
+    AppDataPointer->DO.pY0 = (uint *)BitBand(GPIOA_ODR_ADDR, 7);   
+    AppDataPointer->DO.pY1 = (uint *)BitBand(GPIOB_ODR_ADDR, 0);
+    AppDataPointer->DO.pY2 = (uint *)BitBand(GPIOB_ODR_ADDR, 1);
     AppDataPointer->DO.pY3 = (uint *)BitBand(GPIOB_ODR_ADDR, 13);
     AppDataPointer->DO.pY4 = (uint *)BitBand(GPIOB_ODR_ADDR, 14);
     AppDataPointer->DO.pY5 = (uint *)BitBand(GPIOB_ODR_ADDR, 15);
@@ -82,12 +92,13 @@ static void Open(PwmEnum channel)
     switch(channel)
     {
         case PwmChannel0:
-            TIM_CCxCmd(TIM3, TIM_Channel_3, TIM_CCx_Enable);
+            TIM_CCxCmd(TIM3, TIM_Channel_2, TIM_CCx_Enable);
             break;
         case PwmChannel1:
-            TIM_CCxCmd(TIM3, TIM_Channel_4, TIM_CCx_Enable);
+            TIM_CCxCmd(TIM3, TIM_Channel_3, TIM_CCx_Enable);
             break;   
-        case PwmChannel2:       // msPLC-Demo无此路 
+        case PwmChannel2:
+            TIM_CCxCmd(TIM3, TIM_Channel_4, TIM_CCx_Enable);
             break;
         case PwmChannel3:
             TIM_CCxNCmd(TIM1,TIM_Channel_1, TIM_CCxN_Enable);
@@ -112,12 +123,13 @@ static void Close(PwmEnum channel)
     switch(channel)
     {
         case PwmChannel0:
-            TIM_CCxCmd(TIM3, TIM_Channel_3, TIM_CCx_Disable);
+            TIM_CCxCmd(TIM3, TIM_Channel_2, TIM_CCx_Disable);
             break;
         case PwmChannel1:
-            TIM_CCxCmd(TIM3, TIM_Channel_4, TIM_CCx_Disable);
+            TIM_CCxCmd(TIM3, TIM_Channel_3, TIM_CCx_Disable);
             break;   
-        case PwmChannel2:       // msPLC-Demo无此路 
+        case PwmChannel2:
+            TIM_CCxCmd(TIM3, TIM_Channel_4, TIM_CCx_Disable);
             break;
         case PwmChannel3:
             TIM_CCxNCmd(TIM1,TIM_Channel_1, TIM_CCxN_Disable);
@@ -142,12 +154,13 @@ static void SetDutyRatio(PwmEnum channel, int dutyRatio)
     switch(channel)
     {
         case PwmChannel0:
-            TIM_SetCompare3(TIM3, dutyRatio);
+            TIM_SetCompare2(TIM3, dutyRatio);
             break;
         case PwmChannel1:
-            TIM_SetCompare4(TIM3, dutyRatio);
+            TIM_SetCompare3(TIM3, dutyRatio);
             break;
-        case PwmChannel2:       // msPLC-Demo无此路 
+        case PwmChannel2:
+            TIM_SetCompare4(TIM3, dutyRatio);
             break;
         case PwmChannel3:
             TIM_SetCompare1(TIM1, dutyRatio);
@@ -193,8 +206,8 @@ static void SetParameter(PwmEnum channel, int prescaler, int period, int dutyRat
             
             TIM_OCInitStructure.TIM_OutputState  = TIM_OutputState_Enable;
             TIM_OCInitStructure.TIM_OCPolarity   = TIM_OCPolarity_High;
-            TIM_OC3Init(TIM3, &TIM_OCInitStructure);                      
-            TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable); 
+            TIM_OC2Init(TIM3, &TIM_OCInitStructure);                      
+            TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable); 
             TIM_ARRPreloadConfig(TIM3, ENABLE);
             TIM_Cmd(TIM3, ENABLE);
             break;
@@ -203,12 +216,20 @@ static void SetParameter(PwmEnum channel, int prescaler, int period, int dutyRat
             
             TIM_OCInitStructure.TIM_OutputState  = TIM_OutputState_Enable;
             TIM_OCInitStructure.TIM_OCPolarity   = TIM_OCPolarity_High;
-            TIM_OC4Init(TIM3, &TIM_OCInitStructure);                      
-            TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable); 
+            TIM_OC3Init(TIM3, &TIM_OCInitStructure);                      
+            TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable); 
             TIM_ARRPreloadConfig(TIM3, ENABLE);
             TIM_Cmd(TIM3, ENABLE);       
             break;  
         case PwmChannel2:
+            TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+            
+            TIM_OCInitStructure.TIM_OutputState  = TIM_OutputState_Enable;
+            TIM_OCInitStructure.TIM_OCPolarity   = TIM_OCPolarity_High;
+            TIM_OC4Init(TIM3, &TIM_OCInitStructure);                      
+            TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable); 
+            TIM_ARRPreloadConfig(TIM3, ENABLE);
+            TIM_Cmd(TIM3, ENABLE);  
             break;
         case PwmChannel3:
             TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);  
@@ -258,7 +279,6 @@ static void SetParameter(PwmEnum channel, int prescaler, int period, int dutyRat
 void InitDO(void)
 {    
     PortRegister();
-    
     System.Device.DO.Config = Config;
     System.Device.DO.Pwm.Open = Open;
     System.Device.DO.Pwm.Close  = Close;

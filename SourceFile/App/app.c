@@ -55,10 +55,12 @@ static void InitData(void)
     App.Data.MaxFrequencyOffset = 100000;
     App.Data.MaxPress = 2.0;
     App.Data.State = 1;
-    App.Data.Rtc.Day = 0;
-    App.Data.Rtc.Hour = 0;
-    App.Data.Rtc.Minute = 0;
-    App.Data.Rtc.Second = 0;
+    App.Data.Rtc.Year = 0x7DD;
+    App.Data.Rtc.Month = 4;
+    App.Data.Rtc.Day = 0x1A;
+    App.Data.Rtc.Hour = 0x11;
+    App.Data.Rtc.Minute = 0x2E;
+    App.Data.Rtc.Second = 0x28;
 
     App.Data.SerialNumber = 0;
     App.Data.Year = 14;
@@ -77,7 +79,7 @@ static void InitData(void)
 *******************************************************************************/
 int main(void) 
 {      
-    InitData();
+    InitData();    
     System.Init();                          // 初始化系统层
 
     System.OS.CreateLogicTask(LogicTask);   // 创建业务逻辑任务

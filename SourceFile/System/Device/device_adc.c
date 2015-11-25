@@ -103,8 +103,13 @@ void InitAdc(void)
     DMA_InitTypeDef DMA_InitStructure;
 
     // IO
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_ADC1, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_ADC1, ENABLE);
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
@@ -120,10 +125,10 @@ void InitAdc(void)
     ADC_InitStructure.ADC_NbrOfChannel = Sum;
     ADC_Init(ADC1, &ADC_InitStructure);
 
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1 , ADC_SampleTime_7Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 2 , ADC_SampleTime_7Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 3 , ADC_SampleTime_7Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 4 , ADC_SampleTime_7Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_5, 1 , ADC_SampleTime_7Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 2 , ADC_SampleTime_7Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 3 , ADC_SampleTime_7Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 4 , ADC_SampleTime_7Cycles5);
     ADC_RegularChannelConfig(ADC1, ADC_Channel_16, 5 , ADC_SampleTime_28Cycles5);   // 芯片温度
     ADC_TempSensorVrefintCmd(ENABLE);                                               // 温度使能
 

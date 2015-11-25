@@ -37,6 +37,7 @@ typedef struct
     Form WorkForm;
     Form SetupForm;
     Form ServiceForm;
+    Form TimeForm;
     Form PortForm;
     Form * FocusFormPointer;
 }MenuStruct;

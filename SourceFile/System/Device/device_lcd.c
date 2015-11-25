@@ -34,9 +34,9 @@
 #include "system.h"
 
 
-#define PinClk	    PcOut(9)
-#define PinCs	    PcOut(8)
-#define PinData	    PcOut(7)
+#define PinClk	    PcOut(7)
+#define PinCs	    PcOut(9)
+#define PinData	    PcOut(8)
 #define PinReset	PcOut(6)
 
 const char Array[4] = 
@@ -56,13 +56,9 @@ static void SendInstruct(byte instruct)
     for (i = 23; i > -1; i--) 
     {
         if(GetBit(variable, i)) 
-        {
             PinData = 1;
-        } 
         else 
-        {
             PinData = 0;
-        }
         DelayUs(10);     // 7不能正常工作，考虑余量，取10
         PinClk = 1;
         DelayUs(10);
@@ -144,7 +140,7 @@ void InitLcd(void)
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    PinClk = 0;	
+    PinClk = 0;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
@@ -164,7 +160,7 @@ void InitLcd(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; 
     GPIO_Init(GPIOC, &GPIO_InitStructure);	
-    
+    	
     DelayMs(100);
     PinReset = 1;
     
@@ -173,7 +169,9 @@ void InitLcd(void)
     SendInstruct(0x01);
     SendInstruct(0x02);
     SendInstruct(0x80);
+	
     SendInstruct(0x01);
+
     System.Device.Lcd.DisplayString = LcdDisplayString;
 }
 

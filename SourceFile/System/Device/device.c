@@ -41,6 +41,8 @@ extern void InitDI(void);
 
 extern void InitDO(void);
 
+extern void InitRtc(void);
+
 extern void InitKey(void);
 
 extern void InitLcd(void);
@@ -66,6 +68,8 @@ void InitDevice(void)
     InitDI();
 
     InitDO();
+
+    InitRtc();
 
     InitKey();	
 

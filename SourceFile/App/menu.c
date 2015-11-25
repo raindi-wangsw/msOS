@@ -52,10 +52,6 @@ static TextBox MaxFrequencyTextBox;
 static TextBox MaxFrequencyOffsetTextBox;
 static TextBox MaxPressTextBox;
 static Label StateLabel;
-static TextBox RtcDayTextBox;
-static TextBox RtcHourTextBox;
-static TextBox RtcMinuteTextBox;
-static TextBox RtcSecondTextBox;
 
 static TextBox SerialNumberTextBox;
 static TextBox YearTextBox;
@@ -64,6 +60,14 @@ static TextBox DayTextBox;
 static Label IdentifyNumber0Label;
 static Label IdentifyNumber1Label;
 static Label IdentifyNumber2Label;
+
+static TextBox RtcYearTextBox;
+static TextBox RtcMonthTextBox;
+static TextBox RtcWeekTextBox;
+static TextBox RtcDayTextBox;
+static TextBox RtcHourTextBox;
+static TextBox RtcMinuteTextBox;
+static TextBox RtcSecondTextBox;
 
 static Label X0Label;
 static Label X1Label;
@@ -89,6 +93,12 @@ const string StateString[] =
     "异常报警"
 };
 
+const string WeekString[] = 
+{
+    "日", "一", "二", "三", "四", "五", "六"
+};
+
+
 /*******************************************************************************
 * 函数名	: InitializeMmi
 * 描述	    : 初始化MMI,加载各类控件到各个窗体中
@@ -106,8 +116,8 @@ void InitMenu(void)
     System.Gui.Form.Init(&App.Menu.LogoForm);
     App.Menu.LogoForm.BackTextPointer = "    雨滴科技    "
                                         "      msOS      "
-                                        "     V1.1.0     "
-                                        "   2015.11.23   ";
+                                        "     V1.2.0     "
+                                        "   2015.11.25   ";
 // Check Form
     System.Gui.Form.Init(&App.Menu.CheckForm);
     CheckChart.Character = '*';
@@ -180,7 +190,7 @@ void InitMenu(void)
     App.Menu.SetupForm.BackTextPointer = "功率    温度   C"
                                          "频率   K频偏   K"
                                          "水压            "
-                                         "时间   :  :  :  ";
+                                         "                ";
     System.Gui.Form.AddTextBox(&App.Menu.SetupForm, &MaxPowerTextBox);
     MaxPowerTextBox.DataPointer = (void *)(&App.Data.MaxPower);
     MaxPowerTextBox.Type = GuiDataTypeIntDec;
@@ -240,47 +250,7 @@ void InitMenu(void)
     StateLabel.Align = GuiDataAlignLeft;
     StateLabel.StringBlockPointer = StateString;
     StateLabel.X = 8;
-    StateLabel.Y = 2;
-
-    System.Gui.Form.AddTextBox(&App.Menu.SetupForm, &RtcDayTextBox);
-    RtcDayTextBox.DataPointer = (void *)(&App.Data.Rtc.Day);
-    RtcDayTextBox.Type = GuiDataTypeByteDec;
-    RtcDayTextBox.DataMax = 99;
-    RtcDayTextBox.DataMin = 0;
-    RtcDayTextBox.DataStep = 1;
-    RtcDayTextBox.DataBigStep = 1;
-    RtcDayTextBox.X = 6;
-    RtcDayTextBox.Y = 3; 
-
-    System.Gui.Form.AddTextBox(&App.Menu.SetupForm, &RtcHourTextBox);
-    RtcHourTextBox.DataPointer = (void *)(&App.Data.Rtc.Hour);
-    RtcHourTextBox.Type = GuiDataTypeByteDec;
-    RtcHourTextBox.DataMax = 59;
-    RtcHourTextBox.DataMin = 0;
-    RtcHourTextBox.DataStep = 1;
-    RtcHourTextBox.DataBigStep = 1;
-    RtcHourTextBox.X = 9;
-    RtcHourTextBox.Y = 3; 
-
-    System.Gui.Form.AddTextBox(&App.Menu.SetupForm, &RtcMinuteTextBox);
-    RtcMinuteTextBox.DataPointer = (void *)(&App.Data.Rtc.Minute);
-    RtcMinuteTextBox.Type = GuiDataTypeByteDec;
-    RtcMinuteTextBox.DataMax = 59;
-    RtcMinuteTextBox.DataMin = 0;
-    RtcMinuteTextBox.DataStep = 1;
-    RtcMinuteTextBox.DataBigStep = 1;
-    RtcMinuteTextBox.X = 12;
-    RtcMinuteTextBox.Y = 3; 
-
-    System.Gui.Form.AddTextBox(&App.Menu.SetupForm, &RtcSecondTextBox);
-    RtcSecondTextBox.DataPointer = (void *)(&App.Data.Rtc.Second);
-    RtcSecondTextBox.Type = GuiDataTypeByteDec;
-    RtcSecondTextBox.DataMax = 59;
-    RtcSecondTextBox.DataMin = 0;
-    RtcSecondTextBox.DataStep = 1;
-    RtcSecondTextBox.DataBigStep = 1;
-    RtcSecondTextBox.X = 15;
-    RtcSecondTextBox.Y = 3; 
+    StateLabel.Y = 2; 
 
 // Service Form
     System.Gui.Form.Init(&App.Menu.ServiceForm);
@@ -348,6 +318,84 @@ void InitMenu(void)
     IdentifyNumber2Label.X = 7;
     IdentifyNumber2Label.Y = 3;
     IdentifyNumber2Label.Digits = 8;
+
+// Time Form
+    System.Gui.Form.Init(&App.Menu.TimeForm);
+    App.Menu.TimeForm.BackTextPointer = "    时    间    "
+                                        "                "
+                                        "      年  月  日"
+                                        "星期      :  :  ";
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcYearTextBox);
+    RtcYearTextBox.DataPointer = (void *)(&App.Data.Rtc.Year);
+    RtcYearTextBox.Type = GuiDataTypeUshortDec;
+    RtcYearTextBox.DataMax = 2100;
+    RtcYearTextBox.DataMin = 2000;
+    RtcYearTextBox.DataStep = 1;
+    RtcYearTextBox.DataBigStep = 10;
+    RtcYearTextBox.X = 5;
+    RtcYearTextBox.Y = 2; 
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcMonthTextBox);
+    RtcMonthTextBox.DataPointer = (void *)(&App.Data.Rtc.Month);
+    RtcMonthTextBox.Type = GuiDataTypeByteDec;
+    RtcMonthTextBox.DataMax = 12;
+    RtcMonthTextBox.DataMin = 1;
+    RtcMonthTextBox.DataStep = 1;
+    RtcMonthTextBox.DataBigStep = 2;
+    RtcMonthTextBox.X = 9;
+    RtcMonthTextBox.Y = 2; 
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcDayTextBox);
+    RtcDayTextBox.DataPointer = (void *)(&App.Data.Rtc.Day);
+    RtcDayTextBox.Type = GuiDataTypeByteDec;
+    RtcDayTextBox.DataMax = 31;
+    RtcDayTextBox.DataMin = 0;
+    RtcDayTextBox.DataStep = 1;
+    RtcDayTextBox.DataBigStep = 1;
+    RtcDayTextBox.X = 13;
+    RtcDayTextBox.Y = 2;
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcWeekTextBox);
+    RtcWeekTextBox.DataPointer = (void *)(&App.Data.Rtc.Week);
+    RtcWeekTextBox.Type = GuiDataTypeSnString;
+    RtcWeekTextBox.Align = GuiDataAlignLeft;
+    RtcWeekTextBox.StringBlockPointer = WeekString;
+    RtcWeekTextBox.DataMax = 6;
+    RtcWeekTextBox.DataMin = 0;
+    RtcWeekTextBox.DataStep = 1;
+    RtcWeekTextBox.DataBigStep = 1;
+    RtcWeekTextBox.X = 4;
+    RtcWeekTextBox.Y = 3; 
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcHourTextBox);
+    RtcHourTextBox.DataPointer = (void *)(&App.Data.Rtc.Hour);
+    RtcHourTextBox.Type = GuiDataTypeByteDec;
+    RtcHourTextBox.DataMax = 59;
+    RtcHourTextBox.DataMin = 0;
+    RtcHourTextBox.DataStep = 1;
+    RtcHourTextBox.DataBigStep = 1;
+    RtcHourTextBox.X = 9;
+    RtcHourTextBox.Y = 3; 
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcMinuteTextBox);
+    RtcMinuteTextBox.DataPointer = (void *)(&App.Data.Rtc.Minute);
+    RtcMinuteTextBox.Type = GuiDataTypeByteDec;
+    RtcMinuteTextBox.DataMax = 59;
+    RtcMinuteTextBox.DataMin = 0;
+    RtcMinuteTextBox.DataStep = 1;
+    RtcMinuteTextBox.DataBigStep = 1;
+    RtcMinuteTextBox.X = 12;
+    RtcMinuteTextBox.Y = 3; 
+
+    System.Gui.Form.AddTextBox(&App.Menu.TimeForm, &RtcSecondTextBox);
+    RtcSecondTextBox.DataPointer = (void *)(&App.Data.Rtc.Second);
+    RtcSecondTextBox.Type = GuiDataTypeByteDec;
+    RtcSecondTextBox.DataMax = 59;
+    RtcSecondTextBox.DataMin = 0;
+    RtcSecondTextBox.DataStep = 1;
+    RtcSecondTextBox.DataBigStep = 1;
+    RtcSecondTextBox.X = 15;
+    RtcSecondTextBox.Y = 3;
 
 // Port Form
     System.Gui.Form.Init(&App.Menu.PortForm);
