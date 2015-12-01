@@ -104,6 +104,10 @@ typedef enum
 
 typedef struct 
 {
+    ushort A0;
+    ushort A1;
+    ushort A2;
+    ushort A3;
     ushort * pA0;
     ushort * pA1;
     ushort * pA2;
@@ -118,6 +122,10 @@ typedef enum
 
 typedef struct
 {
+    bool X0;
+    bool X1;
+    bool X2;
+    bool X3;
     uint * pX0;
     uint * pX1;
     uint * pX2;
@@ -132,6 +140,12 @@ typedef enum
 
 typedef struct 
 {
+    bool Y0;
+    bool Y1;
+    bool Y2;
+    bool Y3;
+    bool Y4;    
+    bool Y5;
     uint * pY0;
     uint * pY1;
     uint * pY2;

@@ -204,6 +204,12 @@ typedef struct
             void (*Write)(byte * dataPointer, int sum);
         }Usart2;
         
+        struct Usart3
+        {
+            void (*Register)(uint txdAddress, uint rxdFucntionAddress);
+            void (*Write)(byte * dataPointer, int sum);
+        }Usart3;		
+		
         struct Timer
         {
             void (*Start)(int id, TimerModeEnum mode, int times, function functionPointer);

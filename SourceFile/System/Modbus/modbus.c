@@ -73,6 +73,30 @@ const byte CrcLowBlock[256] =
     0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80, 0x40
 };
 
+/*************************************************************************************
+* CRC校验算法，该算法速度快，占用ROM
+* 传入：缓冲区地址，长度，(1)是(0)否要利用上次的运算结果
+* 多项式：X^16 + X^15 + X^2 + 1
+*************************************************************************************/
+ushort Crc16(byte *bufferPointer, int sum)
+{ 
+    byte high = 0xFF;
+    byte low = 0xFF;
+    byte index;
+    ushort result;
+    
+    while(sum--)
+    {
+        index = high ^ *bufferPointer++ ;
+        high = low ^ CrcHighBlock[index];
+        low = CrcLowBlock[index];
+    }
+
+    Byte1(result) = high;
+    Byte0(result) = low;
+    return (result);    
+}
+
 //extern void InitHostModbus(void);
 extern void InitSlaveModbus(void);
 

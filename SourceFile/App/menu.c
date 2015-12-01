@@ -116,8 +116,8 @@ void InitMenu(void)
     System.Gui.Form.Init(&App.Menu.LogoForm);
     App.Menu.LogoForm.BackTextPointer = "    ÓêµÎ¿Æ¼¼    "
                                         "      msOS      "
-                                        "     V1.2.0     "
-                                        "   2015.11.25   ";
+                                        "     V1.2.1     "
+                                        "   2015.12.01   ";
 // Check Form
     System.Gui.Form.Init(&App.Menu.CheckForm);
     CheckChart.Character = '*';

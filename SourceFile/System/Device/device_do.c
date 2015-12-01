@@ -83,6 +83,16 @@ static void PortRegister(void)
     AppDataPointer->DO.pY5 = (uint *)BitBand(GPIOB_ODR_ADDR, 15);
 }
 
+void DoSystick10000Routine(void)
+{
+    *(uint *)BitBand(GPIOA_ODR_ADDR, 7) = AppDataPointer->DO.Y0;   
+    *(uint *)BitBand(GPIOB_ODR_ADDR, 0) = AppDataPointer->DO.Y1;
+    *(uint *)BitBand(GPIOB_ODR_ADDR, 1) = AppDataPointer->DO.Y2;
+    *(uint *)BitBand(GPIOB_ODR_ADDR, 13) = AppDataPointer->DO.Y3;
+    *(uint *)BitBand(GPIOB_ODR_ADDR, 14) = AppDataPointer->DO.Y4;
+    *(uint *)BitBand(GPIOB_ODR_ADDR, 15) = AppDataPointer->DO.Y5;
+}
+
 /*******************************************************************************
 * 描述	    : 打开对应通道的PWM，这里默认系统时钟频率是 72MHz
 * 输入参数  : channel: 开启哪路Pwm

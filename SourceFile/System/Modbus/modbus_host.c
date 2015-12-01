@@ -17,11 +17,11 @@
 *                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
-*文件名     : modbus_slave.c
-*作用       : 扩展HMI屏
-*原理       : 通过标准Modbus协议扩展工业用HMI屏
+*文件名     : modbus_host.c
+*作用       : 扩展Modbus模块
+*原理       : 通过标准Modbus协议扩展子模块
 *           : 通过Modbus基于PLC定义的四类地址
-*           : 通过四个数组，数组的序号，也即HMI屏数据地址关联数据指针
+*           : 通过四个数组，数组的序号
 ********************************************************************************
 *版本     作者            日期            说明
 *V0.1    Wangsw        2014/11/8       初始版本
@@ -29,7 +29,7 @@
 */
 
 #include "system.h"
-
+#if 0
 #define DeviceID                    1
 #define TimeoutSum                  2
 
@@ -37,24 +37,26 @@
 #define RxdBufferSum                256
 #define DataPointer                 ((DataStruct *)0)
 #define DataBase                    (uint)AppDataPointer
+extern const byte CrcHighBlock[256];
+extern const byte CrcLowBlock[256];
 
 //************************************************************************************
 //与HMI关联数据，填入数据相应的地址
-static const bool * Block0x[] =                // DataOutPort
+const bool * Block0x[] =                // DataOutPort
 {
     &DataPointer->DO.Y0, &DataPointer->DO.Y1, &DataPointer->DO.Y2, &DataPointer->DO.Y3, &DataPointer->DO.Y4, &DataPointer->DO.Y5
 };
 
-static const bool * Block1x[] =                // DataInPort
+const bool * Block1x[] =                // DataInPort
 {
     &DataPointer->DI.X0, &DataPointer->DI.X1, &DataPointer->DI.X2, &DataPointer->DI.X3
 };
-static const ushort * Block3x[] =              // AdcInPort
+const ushort * Block3x[] =              // AdcInPort
 {
     &DataPointer->Adc.A0, &DataPointer->Adc.A1, &DataPointer->Adc.A2, &DataPointer->Adc.A3
 };
 
-static const ushort * Block4x[] =              // Register
+const ushort * Block4x[] =              // Register
 {
     (ushort *)(&DataPointer->Frequency), (ushort *)(&(DataPointer->Frequency)) + 1,
     (ushort *)(&(DataPointer->Voltage)), (ushort *)(&(DataPointer->Current))
@@ -67,7 +69,11 @@ static byte RxdBuffer[RxdBufferSum];    // 接收帧数据缓冲区
 static bool RxdState;                   // 接收状态
 static ushort RxdCounter;               // 接收计数
 static ushort RxdTimeout;               // 接收超时成帧
-#define Write(pointer, sum) System.Device.Usart2.Write(pointer, sum)
+
+
+
+
+
 /*************************************************************************************
 * MODBUS主机响应函数
 * 传入：数据开始地址，长度，（1）是（0）否帧的开始？
@@ -85,7 +91,7 @@ static void Response(byte *bufferPointer, int sum)
     *pointer++ = Byte1(crc);
     *pointer = Byte0(crc);
     sum = sum + 2;
-    Write(bufferPointer, sum);
+    System.Device.Usart3.Write(bufferPointer, sum);
 }
 
 /*************************************************************************************
@@ -180,7 +186,7 @@ static void WriteSingle0x(ushort address)
     else                                                    //false:0x0000
         *(bool *)(DataBase + (uint)Block0x[address]) = false;
     
-    Write(RxdBuffer, RxdCounter);    //应答帧，跟接收帧相同
+    System.Device.Usart3.Write(RxdBuffer, RxdCounter);    //应答帧，跟接收帧相同
 }
 
 /*************************************************************************************
@@ -275,7 +281,7 @@ static void WriteSingle4x(ushort address)
 
     *(ushort *)(DataBase + (uint)Block4x[address]) = data;
     
-    Write(RxdBuffer, RxdCounter);
+    System.Device.Usart3.Write(RxdBuffer, RxdCounter);
 }
 
 /*************************************************************************************
@@ -432,15 +438,15 @@ static void RxdTimeOutRoutine(void)
 /************************************************************************************
 * MODBUS初始化
 *************************************************************************************/
-void InitSlaveModbus(void)
+void InitHostModbus(void)
 {
     RxdReset();
     
     System.Device.Systick.Register(Systick10000, RxdTimeOutRoutine);    
 
-    System.Device.Usart2.Register((uint)TxdBuffer, (uint)DataReceive);
+    System.Device.Usart3.Register((uint)TxdBuffer, (uint)DataReceive);
 }
  
-
+#endif
 
 

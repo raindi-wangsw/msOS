@@ -94,6 +94,11 @@ void AdcSystick10000Routine(void)
             *RegisterPointerBlock[i] = temp;                                // 误差可以达到45度
         }
     }
+
+    AppDataPointer->Adc.A0 = Adc[0];
+    AppDataPointer->Adc.A1 = Adc[1];
+    AppDataPointer->Adc.A2 = Adc[2];
+    AppDataPointer->Adc.A3 = Adc[3];
 }
 
 void InitAdc(void)

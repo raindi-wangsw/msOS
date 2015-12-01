@@ -32,10 +32,18 @@
 
 static void PortRegister(void)
 {
-    AppDataPointer->DI.pX0 = (uint *)BitBand(GPIOA_IDR_ADDR, 4); 
-    AppDataPointer->DI.pX1 = (uint *)BitBand(GPIOA_IDR_ADDR, 5);
-    AppDataPointer->DI.pX2 = (uint *)BitBand(GPIOA_IDR_ADDR, 6);
-    AppDataPointer->DI.pX3 = (uint *)BitBand(GPIOA_IDR_ADDR, 7);
+    AppDataPointer->DI.pX0 = (uint *)BitBand(GPIOC_IDR_ADDR, 0); 
+    AppDataPointer->DI.pX1 = (uint *)BitBand(GPIOC_IDR_ADDR, 1);
+    AppDataPointer->DI.pX2 = (uint *)BitBand(GPIOC_IDR_ADDR, 2);
+    AppDataPointer->DI.pX3 = (uint *)BitBand(GPIOC_IDR_ADDR, 3);
+}
+
+void DiSystick10000Routine(void)
+{
+    AppDataPointer->DI.X0 = *(uint *)BitBand(GPIOC_IDR_ADDR, 0);
+    AppDataPointer->DI.X1 = *(uint *)BitBand(GPIOC_IDR_ADDR, 1);
+    AppDataPointer->DI.X2 = *(uint *)BitBand(GPIOC_IDR_ADDR, 2);
+    AppDataPointer->DI.X3 = *(uint *)BitBand(GPIOC_IDR_ADDR, 3);
 }
 
 void InitDI(void)

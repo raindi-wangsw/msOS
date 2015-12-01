@@ -46,7 +46,9 @@
 #define MaskRegister                0x16    // 屏蔽写寄存器，用于设置或者清楚寄存器中的单个比特，类似SetBit or ReSetBit
 #define ReadDeviceID                0x2B    // 读取设备识别码
 
-
+extern const byte CrcHighBlock[256];
+extern const byte CrcLowBlock[256];
+extern ushort Crc16(byte *bufferPointer, int sum);
 
 extern void InitModbus(void);
 #endif

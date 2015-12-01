@@ -453,6 +453,11 @@
               <FileType>1</FileType>
               <FilePath>..\SourceFile\System\Modbus\modbus_slave.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus_host.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Modbus\modbus_host.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -527,6 +532,11 @@
               <FileName>device_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SourceFile\System\Device\device_misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>device_usart3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\device_usart3.c</FilePath>
             </File>
           </Files>
         </Group>
