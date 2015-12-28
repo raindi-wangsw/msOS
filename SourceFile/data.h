@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : data.h
@@ -27,6 +27,7 @@
 
 #ifndef __DATA_H
 #define __DATA_H
+
 
 
 typedef struct
@@ -58,9 +59,11 @@ typedef struct
     uint IdentifyNumber1;           // ID1
     uint IdentifyNumber2;           // ID2
     
-    AdcStruct Adc;
     DiStruct DI;
     DoStruct DO;
+    AdcStruct Adc;
+
+    SubPlcStruct SubPlc;
 }DataStruct;
 
 

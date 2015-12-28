@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : modbus_slave.c
@@ -36,25 +36,24 @@
 #define TxdBufferSum                256
 #define RxdBufferSum                256
 #define DataPointer                 ((DataStruct *)0)
-#define DataBase                    (uint)AppDataPointer
 
 //************************************************************************************
 //与HMI关联数据，填入数据相应的地址
-static const bool * Block0x[] =                // DataOutPort
+static const bool * DoBlock[] =                // DataOutPort
 {
     &DataPointer->DO.Y0, &DataPointer->DO.Y1, &DataPointer->DO.Y2, &DataPointer->DO.Y3, &DataPointer->DO.Y4, &DataPointer->DO.Y5
 };
 
-static const bool * Block1x[] =                // DataInPort
+static const bool * DiBlock[] =                // DataInPort
 {
     &DataPointer->DI.X0, &DataPointer->DI.X1, &DataPointer->DI.X2, &DataPointer->DI.X3
 };
-static const ushort * Block3x[] =              // AdcInPort
+static const ushort * AdcBlock[] =              // AdcInPort
 {
     &DataPointer->Adc.A0, &DataPointer->Adc.A1, &DataPointer->Adc.A2, &DataPointer->Adc.A3
 };
 
-static const ushort * Block4x[] =              // Register
+static const ushort * RegBlock[] =              // Register
 {
     (ushort *)(&DataPointer->Frequency), (ushort *)(&(DataPointer->Frequency)) + 1,
     (ushort *)(&(DataPointer->Voltage)), (ushort *)(&(DataPointer->Current))
@@ -67,7 +66,9 @@ static byte RxdBuffer[RxdBufferSum];    // 接收帧数据缓冲区
 static bool RxdState;                   // 接收状态
 static ushort RxdCounter;               // 接收计数
 static ushort RxdTimeout;               // 接收超时成帧
-#define Write(pointer, sum) System.Device.Usart2.Write(pointer, sum)
+#define GetBool(node) *(bool *)((uint)AppDataPointer + (uint)node)
+#define GetUshort(node) *(ushort *)((uint)AppDataPointer + (uint)node)
+#define UsartWrite(pointer, sum) System.Device.Usart2.Write(pointer, sum)
 /*************************************************************************************
 * MODBUS主机响应函数
 * 传入：数据开始地址，长度，（1）是（0）否帧的开始？
@@ -85,13 +86,13 @@ static void Response(byte *bufferPointer, int sum)
     *pointer++ = Byte1(crc);
     *pointer = Byte0(crc);
     sum = sum + 2;
-    Write(bufferPointer, sum);
+    UsartWrite(bufferPointer, sum);
 }
 
 /*************************************************************************************
 * 数字输出端口读取
 *************************************************************************************/
-static void Read0x(ushort address)
+static void ReadDo(ushort address)
 {
     int i;
     byte byteSum, packetSum;
@@ -114,11 +115,11 @@ static void Read0x(ushort address)
 
     pointer = &TxdBuffer[3];           //先清空发送内容
     for (i = 0; i < byteSum; i++)       
-        *pointer = false;
-
+        pointer[i] = false;
+    
     for (i = 0; i < bitSum; i++)        //写入端口信息
     {
-        if (*(bool *)(DataBase + (uint)Block0x[address + i]) == true) //采用数据指针数组
+        if (GetBool(DoBlock[address + i]) == true) //采用数据指针数组
             pointer[i >> 3] |= 1 << (i & 7);
     }
 
@@ -130,7 +131,7 @@ static void Read0x(ushort address)
 /*************************************************************************************
 * 数字输入端口读取
 *************************************************************************************/
-static void Read1x(ushort address)
+static void ReadDi(ushort address)
 {
     int i, packetSum;
     ushort bitSum, byteSum;
@@ -152,11 +153,11 @@ static void Read1x(ushort address)
 
     pointer = &TxdBuffer[3];           //发送内容清零
     for (i = 0; i < byteSum; i++)       
-        *pointer = false;
+        pointer[i] = false;
 
     for (i = 0; i < bitSum; i++)        //写入bit信息,msOS中存储bit信息是用Byte数组来存储
     {
-        if (*(bool *)(DataBase + (uint)Block1x[address + i]) == true)
+        if (GetBool(DiBlock[address + i]) == true)
             pointer[i >> 3] |= 1 << (i & 7);
     }
 
@@ -166,48 +167,9 @@ static void Read1x(ushort address)
 }
 
 /*************************************************************************************
-* 线圈单次写操作
-*************************************************************************************/
-static void WriteSingle0x(ushort address)
-{
-    ushort bitFlag;
-
-    Byte1(bitFlag) = RxdBuffer[4];
-    Byte0(bitFlag) = RxdBuffer[5];
-        
-    if (bitFlag == 0xFF00)                                  //true:0xFF00
-        *(bool *)(DataBase + (uint)Block0x[address]) = true;
-    else                                                    //false:0x0000
-        *(bool *)(DataBase + (uint)Block0x[address]) = false;
-    
-    Write(RxdBuffer, RxdCounter);    //应答帧，跟接收帧相同
-}
-
-/*************************************************************************************
-* 线圈多次写操作命令响应
-*************************************************************************************/
-static void Write0x(ushort address)
-{
-    int i;
-    ushort bitSum;
-    byte * pointer;
-    
-    Byte1(bitSum) = RxdBuffer[4];
-    Byte0(bitSum) = RxdBuffer[5];
-
-    pointer = &RxdBuffer[6];
-    for (i = 0; i < bitSum; i++)
-        *(bool *)(DataBase + (uint)Block0x[address + i]) = GetBit(pointer[i >> 3], i & 0x07);
-
-    memcpy(TxdBuffer, RxdBuffer, 6);
-
-    Response(TxdBuffer, 6);
-}
-
-/*************************************************************************************
 * Adc输入处理
 *************************************************************************************/
-static void Read3x(ushort address)
+static void ReadAdc(ushort address)
 {
     int i, packetSum;
     ushort registerSum, data;
@@ -224,7 +186,7 @@ static void Read3x(ushort address)
     pointer = &TxdBuffer[3];
     for (i = 0; i < registerSum; i++)
     {
-        data = *(ushort *)(DataBase + (uint)Block3x[address++]);
+        data = GetUshort(AdcBlock[address++]);
         *pointer++ = Byte1(data);
         *pointer++ = Byte0(data);
     }
@@ -237,7 +199,7 @@ static void Read3x(ushort address)
 /*************************************************************************************
 * 寄存器读操作响应
 *************************************************************************************/
-static void Read4x(ushort address)
+static void ReadReg(ushort address)
 {
     int i, packetSum;
     ushort registerSum, data;
@@ -254,7 +216,7 @@ static void Read4x(ushort address)
     pointer = &TxdBuffer[3];
     for (i = 0; i < registerSum; i++)
     {
-        data = *(ushort *)(DataBase + (uint)Block4x[address++]);
+        data = GetUshort(RegBlock[address++]);
         *pointer++ = Byte1(data);
         *pointer++ = Byte0(data);
     }
@@ -263,19 +225,59 @@ static void Read4x(ushort address)
     
     Response(TxdBuffer, packetSum);
 }
+
+/*************************************************************************************
+* 线圈单次写操作
+*************************************************************************************/
+static void WriteOneDo(ushort address)
+{
+    ushort bitFlag;
+
+    Byte1(bitFlag) = RxdBuffer[4];
+    Byte0(bitFlag) = RxdBuffer[5];
+        
+    if (bitFlag == 0xFF00)                                  //true:0xFF00
+        GetBool(DoBlock[address]) = true;
+    else                                                    //false:0x0000
+        GetBool(DoBlock[address]) = false;
+    
+    UsartWrite(RxdBuffer, RxdCounter);    //应答帧，跟接收帧相同
+}
+
+/*************************************************************************************
+* 线圈多次写操作命令响应
+*************************************************************************************/
+static void WriteDo(ushort address)
+{
+    int i;
+    ushort bitSum;
+    byte * pointer;
+    
+    Byte1(bitSum) = RxdBuffer[4];
+    Byte0(bitSum) = RxdBuffer[5];
+
+    pointer = &RxdBuffer[6];
+    for (i = 0; i < bitSum; i++)
+        GetBool(DoBlock[address + i]) = GetBit(pointer[i >> 3], i & 0x07);
+
+    memcpy(TxdBuffer, RxdBuffer, 6);
+
+    Response(TxdBuffer, 6);
+}
+
 /*************************************************************************************
 * 寄存器单个写操作命令响应
 *************************************************************************************/
-static void WriteSingle4x(ushort address)
+static void WriteOneReg(ushort address)
 {
     ushort data;
 
     Byte1(data) = RxdBuffer[4];
     Byte0(data) = RxdBuffer[5];
 
-    *(ushort *)(DataBase + (uint)Block4x[address]) = data;
+    GetUshort(RegBlock[address]) = data;
     
-    Write(RxdBuffer, RxdCounter);
+    UsartWrite(RxdBuffer, RxdCounter);
 }
 
 /*************************************************************************************
@@ -283,7 +285,7 @@ static void WriteSingle4x(ushort address)
 * 多寄存器写操作命令响应
 *
 *************************************************************************************/
-static void Write4x(ushort address)
+static void WriteReg(ushort address)
 {
     int i;
     ushort registerSum, data;
@@ -298,7 +300,7 @@ static void Write4x(ushort address)
         Byte1(data) = *pointer++;
         Byte0(data) = *pointer++;
 
-        *(ushort *)(DataBase + (uint)Block4x[address++]) = data;
+        GetUshort(RegBlock[address++]) = data;
     }
     
     memcpy(TxdBuffer, RxdBuffer, 6);
@@ -311,11 +313,25 @@ static void Write4x(ushort address)
 /************************************************************************************
 * 数据接收复位
 *************************************************************************************/
-static void RxdReset()
+static void Reset()
 {
     RxdCounter = 0;
     RxdTimeout = 0;
     RxdState = no;
+}
+
+/*************************************************************************************
+* 接收缓冲
+*************************************************************************************/
+static void Receive(byte data)
+{
+    if(RxdCounter >= RxdBufferSum)
+        RxdCounter = 0;
+		
+    RxdBuffer[RxdCounter++] = data;
+
+    RxdTimeout = 0;//1 
+    RxdState = yes;
 }
 
 /*************************************************************************************
@@ -329,63 +345,60 @@ static void ParseRxdFrame(void)
 
     if (RxdBuffer[0] != DeviceID)
     {
-        RxdReset(); return;
+        Reset(); return;
     }
         
-    if (RxdCounter < 4)
+    if (RxdCounter <= 4)
     {
-        RxdReset(); return;
+        Reset(); return;
     }
         
     crcCalculate = Crc16(RxdBuffer, RxdCounter - 2);
     Byte1(crcReceive) = RxdBuffer[RxdCounter - 2];
     Byte0(crcReceive) = RxdBuffer[RxdCounter - 1];
     
-    if (crcCalculate != crcReceive)     //校验
-    {
-        RxdReset(); return;
-    }
+    if (crcCalculate != crcReceive) {Reset(); return;}//校验
     
     Byte1(address) = RxdBuffer[2]; //获取高位地址
     Byte0(address) = RxdBuffer[3]; //获取低位地址
     
     switch(RxdBuffer[1])                       //识别支持的功能码
     {
-        case ReadDataOutPort0X:
-            Read0x(address);
+        case ReadDo0x:
+            ReadDo(address);
             break;
             
-        case ReadDataInPort1X:
-            Read1x(address);
+        case ReadDi1x:
+            ReadDi(address);
             break;
             
-        case ReadAdcInPort3X:
-            Read3x(address);
+        case ReadAdc3x:
+            ReadAdc(address);
             break;
             
-        case ReadRegister4X:
-            Read4x(address);
+        case ReadReg4x:
+            ReadReg(address);
             break;
         
-        case WriteSingleDataOutPort0X:
-            WriteSingle0x(address);
+        case WriteOneDo0x:
+            WriteOneDo(address);
             break;
             
-        case WriteSingleRegister4X:
-            WriteSingle4x(address);
+        case WriteOneReg4x:
+            WriteOneReg(address);
             break;
 
-        case WriteDataOutPort0X:
-            Write0x(address);
+        case WriteDo0x:
+            WriteDo(address);
             break;
             
-        case WriteRegister4X:
-            Write4x(address);
+        case WriteReg4x:
+            WriteReg(address);
             break;
 
-        case ReadWriteRegister4X:
+        case ReadWriteReg4x:
             break;
-        case MaskRegister:
+        case MaskReg:
             break;
         case ReadDeviceID:
             break;  
@@ -393,29 +406,17 @@ static void ParseRxdFrame(void)
             break;
     }
 
-    RxdReset();
+    Reset();
 }
 
-/*************************************************************************************
-* 接收缓冲
-*************************************************************************************/
-static void DataReceive(byte data)
-{
-    if(RxdCounter >= RxdBufferSum)
-        RxdCounter = 0;
-		
-    RxdBuffer[RxdCounter++] = data;
 
-    RxdTimeout = 0;//1 
-    RxdState = yes;
-}
 
 /*************************************************************************************
 * MODBUS接收缓冲区超时控制
 * 每0.1MS被调用一次
 * 用于确认MODBUS接收完一帧数据
 *************************************************************************************/
-static void RxdTimeOutRoutine(void)
+static void SystickRoutine(void)
 {
     if (RxdState == yes)
     {
@@ -434,11 +435,11 @@ static void RxdTimeOutRoutine(void)
 *************************************************************************************/
 void InitSlaveModbus(void)
 {
-    RxdReset();
+    Reset();
     
-    System.Device.Systick.Register(Systick10000, RxdTimeOutRoutine);    
+    System.Device.Systick.Register(Systick10000, SystickRoutine);    
 
-    System.Device.Usart2.Register((uint)TxdBuffer, (uint)DataReceive);
+    System.Device.Usart2.Register((uint)Receive);
 }
  
 

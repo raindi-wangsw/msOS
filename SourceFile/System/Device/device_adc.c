@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : device_adc.c
@@ -94,7 +94,6 @@ void AdcSystick10000Routine(void)
             *RegisterPointerBlock[i] = temp;                                // 误差可以达到45度
         }
     }
-
     AppDataPointer->Adc.A0 = Adc[0];
     AppDataPointer->Adc.A1 = Adc[1];
     AppDataPointer->Adc.A2 = Adc[2];
@@ -134,7 +133,7 @@ void InitAdc(void)
     ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 2 , ADC_SampleTime_7Cycles5);
     ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 3 , ADC_SampleTime_7Cycles5);
     ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 4 , ADC_SampleTime_7Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_16, 5 , ADC_SampleTime_28Cycles5);   // 芯片温度
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_16, 5 , ADC_SampleTime_41Cycles5);   // 芯片温度
     ADC_TempSensorVrefintCmd(ENABLE);                                               // 温度使能
 
     ADC_DMACmd(ADC1, ENABLE);	                                            //ADC DMA Enable

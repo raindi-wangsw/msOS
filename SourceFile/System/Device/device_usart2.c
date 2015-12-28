@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : device_usart2.c
@@ -27,43 +27,43 @@
 #include "drive.h"
 #include "system.h"
 
-
+static void Usart2Dummy(byte data){;}
 typedef void (*Rxd2Function)(byte data);
-Rxd2Function Rxd2;
+Rxd2Function Rxd2 = Usart2Dummy;
 
-static void Register(uint txdAddress, uint rxdFucntionAddress)
+static void Register(uint rxdFucntion)
 {
-    DMA_InitTypeDef DMA_InitStucturer;
-    DMA_InitStucturer.DMA_MemoryBaseAddr = txdAddress;  
-    DMA_InitStucturer.DMA_BufferSize = 0;  
-    DMA_InitStucturer.DMA_PeripheralBaseAddr = (uint)(&(USART2->DR));  
-    DMA_InitStucturer.DMA_DIR = DMA_DIR_PeripheralDST;  
-    DMA_InitStucturer.DMA_PeripheralInc = DMA_PeripheralInc_Disable;  
-    DMA_InitStucturer.DMA_MemoryInc = DMA_MemoryInc_Enable;  
-    DMA_InitStucturer.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;  
-    DMA_InitStucturer.DMA_MemoryDataSize = DMA_PeripheralDataSize_Byte;   
-    DMA_InitStucturer.DMA_Mode = DMA_Mode_Normal;  
-    DMA_InitStucturer.DMA_Priority = DMA_Priority_High;  
-    DMA_InitStucturer.DMA_M2M = DMA_M2M_Disable; 
-    DMA_Init(DMA1_Channel7,&DMA_InitStucturer);  
-
-    Rxd2 = (Rxd2Function)rxdFucntionAddress;
+    Rxd2 = (Rxd2Function)rxdFucntion;
 }
    
 void USART2_IRQHandler(void)
 { 
     byte data;  
-    
+#if 0
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
     {    
         data = USART_ReceiveData(USART2);
-        
-        if(USART_GetITStatus(USART2, USART_FLAG_PE) == RESET)
-            Rxd2(data);
+        Rxd2(data);
     }
     
 	if(USART_GetFlagStatus(USART2,USART_FLAG_ORE)==SET)
 		USART_ReceiveData(USART2);
+#else  
+    uint sr;
+    sr = USART2->SR;
+
+
+    if (sr & USART_FLAG_RXNE)
+    {
+        data = USART_ReceiveData(USART2);
+        Rxd2(data);
+    }
+    
+    if (sr & USART_FLAG_ORE)
+    {
+        USART_ReceiveData(USART2);
+    }
+#endif 
 }
 
 
@@ -71,6 +71,7 @@ void USART2_IRQHandler(void)
 static void WriteToUsart2(byte * dataPointer, int sum)
 {
     DMA_Cmd(DMA1_Channel7, DISABLE);
+    DMA1_Channel7->CMAR = (uint)dataPointer;
     DMA1_Channel7->CNDTR = sum;
     DMA_Cmd(DMA1_Channel7, ENABLE);  
 }

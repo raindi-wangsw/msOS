@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : device.h
@@ -93,27 +93,6 @@ typedef struct
     ushort Year; 
 }RtcStruct;
 
-typedef enum
-{
-    AdcChannel0             = 0,
-    AdcChannel1             = 1,
-    AdcChannel2             = 2,
-    AdcChannel3             = 3,
-    AdcTemperature          = 4         
-}AdcChannelEnum;
-
-typedef struct 
-{
-    ushort A0;
-    ushort A1;
-    ushort A2;
-    ushort A3;
-    ushort * pA0;
-    ushort * pA1;
-    ushort * pA2;
-    ushort * pA3;
-}AdcStruct;
-
 typedef enum 
 {
     DiX                     = 0,    // 开关量
@@ -154,6 +133,26 @@ typedef struct
     uint * pY5;
 } DoStruct;
 
+typedef enum
+{
+    AdcChannel0             = 0,
+    AdcChannel1             = 1,
+    AdcChannel2             = 2,
+    AdcChannel3             = 3,
+    AdcTemperature          = 4         
+}AdcChannelEnum;
+
+typedef struct 
+{
+    ushort A0;
+    ushort A1;
+    ushort A2;
+    ushort A3;
+    ushort * pA0;
+    ushort * pA1;
+    ushort * pA2;
+    ushort * pA3;
+}AdcStruct;
 
 extern void InitDevice(void);
 

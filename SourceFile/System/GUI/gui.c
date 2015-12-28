@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : gui.c
@@ -107,7 +107,28 @@ static void LabelToGuiLcd(Label * labelPointer)
 
             while(len--) {GuiLcd[y][x] = buffer[len]; x--;}
             break;
-
+        case GuiDataTypeUshortHex:
+            u16 = *((ushort *)(labelPointer->DataPointer));
+            u16 = ((float)u16 + labelPointer->Offset) * labelPointer->Coefficient;
+            len = labelPointer->Digits;
+            if (len)
+            {
+                while(len--)
+                {
+                    GuiLcd[y][x] = HexToAscii(u16 & 0x000F);
+                    u16 = u16 >> 4; if(x) x--;
+                }
+            }
+            else
+            {
+                GuiLcd[y][x] = '0';
+                while(u16)
+                {
+                    GuiLcd[y][x] = HexToAscii(u32 & 0x000F);
+                    u16 = u16 >> 4; if(x) x--;
+                }
+            }
+            break;   
         case GuiDataTypeUintHex:
             u32 = *((uint *)(labelPointer->DataPointer));
             u32 = ((double)u32 + (double)labelPointer->Offset) * (double)labelPointer->Coefficient;
@@ -408,7 +429,7 @@ static void ModifyTextBoxData(KeyEnum key)
 {
     TextBox * textBoxPointer;
     void * dataPointer;
-    DataType dataType;
+    GuiDataType dataType;
     
     int s32;
     int s32Max;
@@ -475,6 +496,7 @@ ProcInt:    switch(key)
             u32BigStep = (byte)(textBoxPointer->DataBigStep);
             goto ProcUint;
         case GuiDataTypeUshortDec:
+        case GuiDataTypeUshortHex:
             u32 = * (ushort *)(textBoxPointer->DataPointer);
             u32Max = (ushort)(textBoxPointer->DataMax);
             u32Min = (ushort)(textBoxPointer->DataMin);
@@ -483,7 +505,7 @@ ProcInt:    switch(key)
             goto ProcUint;
         case GuiDataTypeUintDec:
         case GuiDataTypeUintHex:
-            u32 = * (uint *)(textBoxPointer->DataPointer);
+            u32 = * (uint *)(textBoxPointer->DataPointer);            
             u32Max = (uint)(textBoxPointer->DataMax);
             u32Min = (uint)(textBoxPointer->DataMin);
             u32Step = (uint)(textBoxPointer->DataStep);        
@@ -506,6 +528,7 @@ ProcUint:   switch(key)
                     *(byte *)dataPointer = u32;
                     break;
                 case GuiDataTypeUshortDec:
+                case GuiDataTypeUshortHex:
                     *(ushort *)dataPointer = u32;
                     break;
                 case GuiDataTypeUintDec:

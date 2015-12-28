@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : modbus.h
@@ -30,21 +30,29 @@
 #ifndef __MODBUS_H
 #define __MODBUS_H
 
-#define ReadDataOutPort0X           0x01    // 读0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问,最多2000bit
-#define ReadDataInPort1X            0x02    // 读1X地址:10001~19999,PLC数字输入端口(触点)，比特访问,最多2000bit
-#define ReadAdcInPort3X             0x04    // 读3X地址:30001~39999,PLC模拟输入端口(寄存器)，16bit访问,最多125
-#define ReadRegister4X              0x03    // 读4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多125
+#define ReadDo0x        0x01    // 读0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问,最多2000bit
+#define ReadDi1x        0x02    // 读1X地址:10001~19999,PLC数字输入端口(触点)，比特访问,最多2000bit
+#define ReadAdc3x       0x04    // 读3X地址:30001~39999,PLC模拟输入端口(寄存器)，16bit访问,最多125
+#define ReadReg4x       0x03    // 读4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多125
 
-#define WriteSingleDataOutPort0X    0x05    // 写单个0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问
-#define WriteSingleRegister4X       0x06    // 写单个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问
+#define WriteOneDo0x    0x05    // 写单个0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问
+#define WriteOneReg4x   0x06    // 写单个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问
 
-#define WriteDataOutPort0X          0x0F    // 写多个0X地址:00000~09999,PLC数字输出端口(线圈)，比特访问,最多1968bit
-#define WriteRegister4X             0x10    // 写多个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多120
+#define WriteDo0x       0x0F    // 写多个0X地址:00000~09999,PLC数字输出端口(线圈)，比特访问,最多1968bit
+#define WriteReg4x      0x10    // 写多个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多120
 
-#define ReadWriteRegister4X         0x17    // 读写多个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问
+#define ReadWriteReg4x  0x17    // 读写多个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问
 
-#define MaskRegister                0x16    // 屏蔽写寄存器，用于设置或者清楚寄存器中的单个比特，类似SetBit or ReSetBit
-#define ReadDeviceID                0x2B    // 读取设备识别码
+#define MaskReg         0x16    // 屏蔽写寄存器，用于设置或者清楚寄存器中的单个比特，类似SetBit or ReSetBit
+#define ReadDeviceID    0x2B    // 读取设备识别码
+
+typedef struct
+{
+    DiStruct DI;
+    DoStruct DO;
+    AdcStruct Adc;
+    int Reg;
+}SubPlcStruct;
 
 extern const byte CrcHighBlock[256];
 extern const byte CrcLowBlock[256];

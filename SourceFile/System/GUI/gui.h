@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : gui.h
@@ -42,16 +42,17 @@ typedef enum
     GuiDataTypeIntDec,
     GuiDataTypeUintDec,
     GuiDataTypeFloatDec,
+    GuiDataTypeUshortHex,
     GuiDataTypeUintHex,
     GuiDataTypeString,              // 直接显示字符串
     GuiDataTypeSnString             // 序号显示字符串(与字符串数组配套)
-}DataType;
+}GuiDataType;
 
 typedef enum
 {
 	GuiDataAlignLeft,
 	GuiDataAlignRight
-}DataAlign;
+}GuiDataAlign;
 
 typedef struct
 {
@@ -64,8 +65,8 @@ typedef struct LabelSelf
     byte X;
     byte Y;
     
-    DataType Type;
-    DataAlign Align;
+    GuiDataType Type;
+    GuiDataAlign Align;
     ushort Digits;
     
     float Offset;
@@ -81,8 +82,8 @@ typedef struct TextBoxSelf
     byte X;
     byte Y;
     
-    DataType Type;
-    DataAlign Align;
+    GuiDataType Type;
+    GuiDataAlign Align;
     ushort Digits;
     
     float Offset;

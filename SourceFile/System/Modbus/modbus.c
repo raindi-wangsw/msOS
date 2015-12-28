@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : modbus.c
@@ -97,11 +97,11 @@ ushort Crc16(byte *bufferPointer, int sum)
     return (result);    
 }
 
-//extern void InitHostModbus(void);
+extern void InitHostModbus(void);
 extern void InitSlaveModbus(void);
 
 void InitModbus(void)
 {
-    //InitHostModbus();
+    InitHostModbus();
     InitSlaveModbus();
 }

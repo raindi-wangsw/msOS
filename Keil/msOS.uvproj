@@ -529,14 +529,14 @@
               <FilePath>..\SourceFile\System\Device\device_usart2.c</FilePath>
             </File>
             <File>
-              <FileName>device_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SourceFile\System\Device\device_misc.c</FilePath>
-            </File>
-            <File>
               <FileName>device_usart3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SourceFile\System\Device\device_usart3.c</FilePath>
+            </File>
+            <File>
+              <FileName>device_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SourceFile\System\Device\device_misc.c</FilePath>
             </File>
           </Files>
         </Group>

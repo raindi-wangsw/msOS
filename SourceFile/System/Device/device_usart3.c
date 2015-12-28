@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名     : device_usart3.c
@@ -29,42 +29,56 @@
 
 #define Direct PbOut(8)
 
+static void Usart3Dummy(byte data){;}
 typedef void (*Rxd3Function)(byte data);
-Rxd3Function Rxd3;
+Rxd3Function Rxd3 = Usart3Dummy;
 
-static void Register(uint txdAddress, uint rxdFucntionAddress)
+static void Register(uint rxdFucntion)
 {
-    DMA_InitTypeDef DMA_InitStucturer;
-    DMA_InitStucturer.DMA_MemoryBaseAddr = txdAddress;  
-    DMA_InitStucturer.DMA_BufferSize = 0;  
-    DMA_InitStucturer.DMA_PeripheralBaseAddr = (uint)(&(USART3->DR));  
-    DMA_InitStucturer.DMA_DIR = DMA_DIR_PeripheralDST;  
-    DMA_InitStucturer.DMA_PeripheralInc = DMA_PeripheralInc_Disable;  
-    DMA_InitStucturer.DMA_MemoryInc = DMA_MemoryInc_Enable;  
-    DMA_InitStucturer.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;  
-    DMA_InitStucturer.DMA_MemoryDataSize = DMA_PeripheralDataSize_Byte;   
-    DMA_InitStucturer.DMA_Mode = DMA_Mode_Normal;  
-    DMA_InitStucturer.DMA_Priority = DMA_Priority_High;  
-    DMA_InitStucturer.DMA_M2M = DMA_M2M_Disable; 
-    DMA_Init(DMA1_Channel2,&DMA_InitStucturer);  
-
-    Rxd3 = (Rxd3Function)rxdFucntionAddress;
+    Rxd3 = (Rxd3Function)rxdFucntion;
 }
-   
+
 void USART3_IRQHandler(void)
 { 
     byte data;  
     
+#if 0
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
     {    
         data = USART_ReceiveData(USART3);
-        
-        if(USART_GetITStatus(USART3, USART_FLAG_PE) == RESET)
-            Rxd3(data);
+        Rxd3(data);
+    }
+
+    if (USART_GetITStatus(USART3, USART_IT_TC) != RESET)    // 发送帧完成   
+    {
+        Direct = 0;
+        USART_ITConfig(USART3, USART_IT_TC, DISABLE);
     }
     
-	if(USART_GetFlagStatus(USART3,USART_FLAG_ORE)==SET)
+ 
+	if(USART_GetFlagStatus(USART3,USART_FLAG_ORE) == SET)
 		USART_ReceiveData(USART3);
+#else  
+    uint sr;
+    sr = USART3->SR;
+
+    if (sr & USART_FLAG_TC)
+    {
+            Direct = 0;
+            USART_ITConfig(USART3, USART_IT_TC, DISABLE);
+    }
+
+    if (sr & USART_FLAG_RXNE)
+    {
+        data = USART_ReceiveData(USART3);
+        Rxd3(data);
+    }
+    
+    if (sr & USART_FLAG_ORE)
+    {
+        USART_ReceiveData(USART3);
+    }
+#endif 
 }
 
 
@@ -72,12 +86,11 @@ void USART3_IRQHandler(void)
 static void WriteToUsart3(byte * dataPointer, int sum)
 {
     Direct = 1;
-    
     DMA_Cmd(DMA1_Channel2, DISABLE);
-    // DMA发送完成中断早于发送数据2个Byte的时间，需要增加补偿，否则导致RS485切换丢失发送数据
-    DMA1_Channel2->CNDTR = sum + 2; 
+    DMA1_Channel2->CMAR = (uint)dataPointer;
+    DMA1_Channel2->CNDTR = sum;
+    USART_ITConfig(USART3, USART_IT_TC, DISABLE);
     DMA_Cmd(DMA1_Channel2, ENABLE);  
-
 }
 
 void DMA1_Channel2_IRQHandler(void)
@@ -85,7 +98,8 @@ void DMA1_Channel2_IRQHandler(void)
     if (DMA_GetITStatus(DMA1_IT_TC2) == SET)
     {
         DMA_ClearITPendingBit(DMA1_IT_TC2);
-        Direct = 0;
+        USART_ClearFlag(USART3, USART_FLAG_TC);
+        USART_ITConfig(USART3, USART_IT_TC, ENABLE);
     }
 }
 

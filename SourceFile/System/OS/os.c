@@ -13,8 +13,8 @@
 *
 *                                QQ:26033613
 *                               QQ群:291235815
+*                        论坛:http://bbs.huayusoft.com
 *                        淘宝店:http://52edk.taobao.com
-*                      论坛:http://gongkong.eefocus.com/bbs/
 *                博客:http://forum.eet-cn.com/BLOG_wangsw317_1268.HTM
 ********************************************************************************
 *文件名   : os.c
@@ -147,7 +147,7 @@ static void Schedule(TaskStruct *taskPointer)
 /*******************************************************************************
 * 描述	    : 节拍例行，主要用于任务挂起延时作用
 *******************************************************************************/
-static void SystemTickRoutine(void)
+static void SystickRoutine(void)
 {       
     if (LogicTask.Delay > 0) 
     {
@@ -162,7 +162,7 @@ static void SystemTickRoutine(void)
 *******************************************************************************/
 static void Start(void)
 {
-    System.Device.Systick.Register(Systick1000, SystemTickRoutine); //注册OS节拍函数
+    System.Device.Systick.Register(Systick1000, SystickRoutine); //注册OS节拍函数
 
     CurrentTaskPointer = &LogicTask;
     NextTaskPointer = CurrentTaskPointer;
