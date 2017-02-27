@@ -105,10 +105,10 @@ typedef struct
     bool X1;
     bool X2;
     bool X3;
-    uint * pX0;
-    uint * pX1;
-    uint * pX2;
-    uint * pX3;
+    bool * pX0;
+    bool * pX1;
+    bool * pX2;
+    bool * pX3;
 }DiStruct;
 
 typedef enum 
@@ -125,12 +125,12 @@ typedef struct
     bool Y3;
     bool Y4;    
     bool Y5;
-    uint * pY0;
-    uint * pY1;
-    uint * pY2;
-    uint * pY3;
-    uint * pY4;    
-    uint * pY5;
+    bool * pY0;
+    bool * pY1;
+    bool * pY2;
+    bool * pY3;
+    bool * pY4;    
+    bool * pY5;
 } DoStruct;
 
 typedef enum

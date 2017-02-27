@@ -9,7 +9,7 @@ msOSÖ÷ÒªÎªÁËÅäºÏmsPLCÇ¶ÈëÊ½PLCÏîÄ¿¶ø¿ª·¢£¬ÒÔ×÷ÕßÇ°Äê¿ª·¢µÄ´ó¹¦ÂÊ6000W¡¢1MHz³¬¸ßÆ
 ·ïÎèÌì£¬Ô­Ãû£ºÍõÉÜÎ°£¬±êÊ¶£ºwangsw
 1997Äê¡ª2001Äê  ±ÏÒµÓÚÀ¼ÖÝ´óÑ§µçÐÅ×¨Òµ¡£ÔÚ´óÑ§ÆÚ¼äµ£ÈÎµç×ÓÐ­»á»á³¤£¬ÎªÑ§Ð£Í¬Ñ§Î¬ÐÞËæÉíÌý¡¢ÊÕÒô»úµÈµç×ÓÉè±¸£¬µì¶¨º¸½Ó¡¢Î¬ÐÞºÍ×öÊÂÒ»¿´¡¢¶þÏë¡¢Èý×ö¡¢ËÄ¼ì²âµÄ»ù´¡¡£
 2001Äê          ½øÈëÖÐ¿ÆÔº°ëµ¼ÌåËù¹âµçÖÐÐÄ¹¤×÷¡£
-2002Äê¡ª2003Äê  »ùÓÚMCU51¿ª·¢ÁËÊµÓÃµ¥Æ¬»úÏµÍ³(MS)²¢¿ªÔ´ÍÆ¹ã£¬»ñµÃ¹ã´óÇ¶ÈëÊ½³õÑ§ÕßµÄºÃÆÀ¡£
+2002Äê¡ª2003Äê  ½øÈëÊÖ»úÐÐÒµ£¬Í¬Ê±»ùÓÚMCU51¿ª·¢ÁËÊµÓÃµ¥Æ¬»úÏµÍ³(MS)²¢¿ªÔ´ÍÆ¹ã£¬»ñµÃ¹ã´óÇ¶ÈëÊ½³õÑ§ÕßµÄºÃÆÀ¡£
 2004Äê          ´´Òµ×öÄæ±äÆ÷£¬ËäÈ»Ê§°Ü£¬µ«ÊÇ´Ó¼¼ÊõÉÏ¡¢ÎïÁÏ²É¹ºÉÏ¡¢Éú²úÉÏ»ýÀÛÁË±¦¹óµÄ¾­Ñé¡£
 2005Äê          ÔÙ´Î´´Òµ£¬µ«ÊÇÓÉÓÚ¶ÔÊÐ³¡²»ÁË½âºÍ¶Ô²úÆ·¶¨Î»²»Ã÷È·£¬×îÖÕµ¼ÖÂÊ§°Ü¡£
 2006Äê¡ª2009Äê  ÔÚÉîÛÚÊÐ»ªÓí¸ß¿Æ¼¼ÓÐÏÞ¹«Ë¾¹¤×÷£¬ÒýÈëÁËMTK·½°¸£¬¿ªÊ¼ÊÖ»ú¿ª·¢¡£
@@ -138,14 +138,33 @@ V1.1.0.20151123_Release
 V1.2.0.20151125
 1¡¢Ó²¼þÆ½Ì¨ÎªmsPLC-100C
 2¡¢Ôö¼ÓRTCÍòÄêÀú¹¦ÄÜ£¬Ê±¼äÎª2013~2099Äê
+
 V1.2.1.20151201 
 1¡¢ÐÞÕýdevice_di.cÖÐµÄPortRegisterº¯Êý¶Ë¿Ú×¢²á´íÎó
 2¡¢Ôö¼ÓAdc¡¢Di¡¢DoµÄ¶Ë¿ÚÊý¾ÝÀàÐÍ£¬²¢ÇÒÀí½â½ÚÅÄÉ¨Ãè»ñÈ¡¶Ë¿ÚÐÅÏ¢
 3¡¢Ôö¼ÓUSART3Çý¶¯£¬Îªmodbus_host×¼±¸
 4¡¢modbus_slaveµÄ½»»»Êý¾Ý¸Ä³ÉÈýÂ·¶Ë¿Ú(Adc¡¢Di¡¢Do)¡£
+
 V1.3.0.20151228
 1¡¢Ôö¼Ómodbus_hostÖ÷»ú¹¦ÄÜ
 2¡¢Í³Ò»ÁËmodbusÖ÷´Ó»úµÄ±à³Ì·ç¸ñ
 
+V1.3.1.20160323
+1¡¢IO¶Ë¿ÚÎ»°ó¶¨²ÉÓÃ¾²Ì¬Ö¸Õë±äÁ¿²Ù×÷
+2¡¢Menu³õÊ¼»¯£¬·ÖÎª¶à¸öº¯Êý£¬°´Ò³Ãæ³õÊ¼»¯
 
+V1.3.2.20161023
+1¡¢¸ù¾ÝÊµ¼ÊÏîÄ¿¾­Ñé£¬Ôö¼ÓÀàËÆAppDataPointerµÄÒ³ÃæÖ¸ÕëAppMenuPointer£¬·½±ãÔÚÉè±¸²ãÖ±½Ó²Ù×÷Ò³Ãæ»òÕßÅÐ¶Ïµ±Ç°Ò³ÃæÇé¿ö£¬Ìá¸ß¿ª·¢Ð§ÂÊ¡£
+2¡¢ÔÚGuiÖÐÔö¼ÓLCDÆÁ´òÓ¡µ÷ÊÔ¹¦ÄÜ¿Ø¼þMessage£¬AddMessageÊµÏÖÀàËÆprintf´òÆÁº¯Êý¹¦ÄÜ£¬ÀûÓÃvsprintf±ä²Îº¯Êý£¬·½±ã²ÎÊý´òÓ¡£¬Õâ¸ö¹¦ÄÜÔÚÊµ¼ÊÏîÄ¿ÖÐ±È½ÏÓÐÒâÒå£¬¿ÉÒÔÔÚÈÎÒâÒ³Ãæ´òÓ¡¡£DeleteMessageÈ¡Ïû´òÓ¡ÐÅÏ¢¡£
 
+V1.3.2.20161025
+1¡¢ÐÞ¸ÄÁËParseMessageÖÐ£¬X¡¢Y×ø±êµ÷»»µÄ´íÎó¡£
+
+V1.3.2.20161205
+1¡¢ÐÞ¸ÄÁËParseMessage´úÂë£¬ÈÃËü¸ü¼Ó¼òµ¥Ò×ÓÃ¡£
+2¡¢ÐÞ¸ÄÁËdevice_rtcÉè±¸ÉèÖÃÈ±ÏÝ¡£
+
+V1.3.3.20170227
+1¡¢logic.cÖÐÓÃmessage >> 24´úÌæÔ­À´µÄByte3(message),Byte3ÕâÖÖÇ¿ÖÆÀàÐÍ×ª»»¼¼ÇÉ£¬ÈÝÒ×ÒýÆð±àÒëÆ÷ÓÅ»¯´íÎó
+2¡¢device_key.cÖÐ InitKeyº¯Êý GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,ENABLE);´úÌæGPIO_PinRemapConfig(GPIO_Remap_SW,J_Disable,ENABLE);½â¾öSWD DebugÊ±¹Ø±ÕSWD¶øµ¼ÖÂÎÞ·¨µ÷ÊÔµÄÎÊÌâ¡£
+3¡¢±àÒëÆ÷Ä¬ÈÏÎªMDK5.15£¬±ãÓÚJLINK_V9.2µ÷ÊÔ

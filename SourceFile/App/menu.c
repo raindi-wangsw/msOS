@@ -33,127 +33,37 @@
 
 
 
-
-// 自检
-static Chart CheckChart;
-
-
-static TextBox FrequencyTextBox;
-static TextBox PowerPercentTextBox;
-static Label PowerLabel;
-static Label VoltageLabel;
-static Label CurrentLabel;
-static Label TemperatureLabel;
-static Label OnOffLabel;
-
-static TextBox MaxPowerTextBox;
-static TextBox MaxTemperatureTextBox;
-static TextBox MaxFrequencyTextBox;
-static TextBox MaxFrequencyOffsetTextBox;
-static TextBox MaxPressTextBox;
-static Label StateLabel;
-
-static TextBox SerialNumberTextBox;
-static TextBox YearTextBox;
-static TextBox MonthTextBox;
-static TextBox DayTextBox;
-static Label IdentifyNumber0Label;
-static Label IdentifyNumber1Label;
-static Label IdentifyNumber2Label;
-
-static TextBox RtcYearTextBox;
-static TextBox RtcMonthTextBox;
-static TextBox RtcWeekTextBox;
-static TextBox RtcDayTextBox;
-static TextBox RtcHourTextBox;
-static TextBox RtcMinuteTextBox;
-static TextBox RtcSecondTextBox;
-
-static Label X0Label;
-static Label X1Label;
-static Label X2Label;
-static Label X3Label;
-
-static TextBox Y0TextBox;
-static TextBox Y1TextBox;
-static TextBox Y2TextBox;
-static TextBox Y3TextBox;
-static TextBox Y4TextBox;
-static TextBox Y5TextBox;
-
-static Label Adc0Label;
-static Label Adc1Label;
-static Label Adc2Label;
-static Label Adc3Label;
-
-static Label X0Label1;
-static Label X1Label1;
-static Label X2Label1;
-static Label X3Label1;
-
-static TextBox Y0TextBox1;
-static TextBox Y1TextBox1;
-static TextBox Y2TextBox1;
-static TextBox Y3TextBox1;
-static TextBox Y4TextBox1;
-static TextBox Y5TextBox1;
-
-static Label Adc0Label1;
-static Label Adc1Label1;
-static Label Adc2Label1;
-static Label Adc3Label1;
-static TextBox Reg1TextBox1;
-static TextBox Reg0TextBox1;
-static TextBox RegTextBox1;
-
-const string OnOffString[] =
+static void InitLogoForm(void)
 {
-    "关", "开"
-};
-
-const string StateString[] = 
-{
-    "开机扫频",
-    "正常待机",
-    "定频工作",
-    "锁相工作",
-    "异常报警"
-};
-
-const string WeekString[] = 
-{
-    "日", "一", "二", "三", "四", "五", "六"
-};
-
-
-/*******************************************************************************
-* 函数名	: InitializeMmi
-* 描述	    : 初始化MMI,加载各类控件到各个窗体中
-* 输入参数  : 无
-* 返回参数  : 无
-********************************************************************************
-*版本     作者            日期            说明
-*V0.1    Wangsw        2013/09/11       初始版本
-*******************************************************************************/
-void InitMenu(void)
-{
-    byte i;
-
-// Logo Form
     System.Gui.Form.Init(&App.Menu.LogoForm);
     App.Menu.LogoForm.BackTextPointer = "    雨滴科技    "
                                         "      msOS      "
-                                        "     V1.3.0     "
-                                        "   2015.12.28   ";
-// Check Form
+                                        "     V1.3.2     "
+                                        "   2016.12.05   ";
+}
+static void InitCheckForm(void)
+{
+    static Chart CheckChart;
+    int i;
     System.Gui.Form.Init(&App.Menu.CheckForm);
     CheckChart.Character = '*';
     for(i = 0; i < 16; i++)
         CheckChart.Column[i] = 0;
 
     App.Menu.CheckForm.ChartPointer = &CheckChart;
+}
 
-// Work Form
+void InitWorkForm(void)
+{
+    static TextBox FrequencyTextBox;
+    static TextBox PowerPercentTextBox;
+    static Label PowerLabel;
+    static Label VoltageLabel;
+    static Label CurrentLabel;
+    static Label TemperatureLabel;
+    static Label OnOffLabel;
+    static const string OnOffString[] = {"关", "开"};
+    
     System.Gui.Form.Init(&App.Menu.WorkForm);
     App.Menu.WorkForm.BackTextPointer = "频率          Hz"
                                         "功率   %       W"
@@ -165,8 +75,8 @@ void InitMenu(void)
     FrequencyTextBox.Type = GuiDataTypeIntDec;
     FrequencyTextBox.DataMax = 980000;
     FrequencyTextBox.DataMin = 600000;
-    FrequencyTextBox.DataStep = 1000;
     FrequencyTextBox.DataBigStep = 10000;
+    FrequencyTextBox.DataStep = 1000;
     FrequencyTextBox.X = 13;
     FrequencyTextBox.Y = 0;
     
@@ -175,8 +85,8 @@ void InitMenu(void)
     PowerPercentTextBox.Type = GuiDataTypeIntDec;
     PowerPercentTextBox.DataMax = 100;
     PowerPercentTextBox.DataMin = 0;
-    PowerPercentTextBox.DataStep = 1;
     PowerPercentTextBox.DataBigStep = 10;
+    PowerPercentTextBox.DataStep = 1;
     PowerPercentTextBox.X = 6;
     PowerPercentTextBox.Y = 1;
     
@@ -211,8 +121,25 @@ void InitMenu(void)
     OnOffLabel.StringBlockPointer = OnOffString;
     OnOffLabel.X = 15;
     OnOffLabel.Y = 3;
+}
+
+static void InitSetupForm(void)
+{
+    static TextBox MaxPowerTextBox;
+    static TextBox MaxTemperatureTextBox;
+    static TextBox MaxFrequencyTextBox;
+    static TextBox MaxFrequencyOffsetTextBox;
+    static TextBox MaxPressTextBox;
+    static Label StateLabel;
+    static const string StateString[] = 
+    {
+        "开机扫频",
+        "正常待机",
+        "定频工作",
+        "锁相工作",
+        "异常报警"
+    };
     
-// Setup Form
     System.Gui.Form.Init(&App.Menu.SetupForm);
     App.Menu.SetupForm.BackTextPointer = "功率    温度   C"
                                          "频率   K频偏   K"
@@ -223,8 +150,8 @@ void InitMenu(void)
     MaxPowerTextBox.Type = GuiDataTypeIntDec;
     MaxPowerTextBox.DataMax = 7500;
     MaxPowerTextBox.DataMin = 4000;
-    MaxPowerTextBox.DataStep = 500;
     MaxPowerTextBox.DataBigStep = 500;
+    MaxPowerTextBox.DataStep = 500;
     MaxPowerTextBox.X = 7;
     MaxPowerTextBox.Y = 0;
     
@@ -233,8 +160,8 @@ void InitMenu(void)
     MaxTemperatureTextBox.Type = GuiDataTypeIntDec;
     MaxTemperatureTextBox.DataMax = 60;
     MaxTemperatureTextBox.DataMin = 40;
-    MaxTemperatureTextBox.DataStep = 1;
     MaxTemperatureTextBox.DataBigStep = 1;
+    MaxTemperatureTextBox.DataStep = 1;
     MaxTemperatureTextBox.X = 14;
     MaxTemperatureTextBox.Y = 0;
     
@@ -243,8 +170,8 @@ void InitMenu(void)
     MaxFrequencyTextBox.Type = GuiDataTypeIntDec;
     MaxFrequencyTextBox.DataMax = 980000;
     MaxFrequencyTextBox.DataMin = 500000;
-    MaxFrequencyTextBox.DataStep = 100000;
     MaxFrequencyTextBox.DataBigStep = 100000;
+    MaxFrequencyTextBox.DataStep = 100000;
     MaxFrequencyTextBox.Coefficient = 0.001;
     MaxFrequencyTextBox.X = 6;
     MaxFrequencyTextBox.Y = 1;
@@ -254,8 +181,8 @@ void InitMenu(void)
     MaxFrequencyOffsetTextBox.Type = GuiDataTypeIntDec;
     MaxFrequencyOffsetTextBox.DataMax = 100000;
     MaxFrequencyOffsetTextBox.DataMin = 50000;
-    MaxFrequencyOffsetTextBox.DataStep = 10000;
     MaxFrequencyOffsetTextBox.DataBigStep = 10000;
+    MaxFrequencyOffsetTextBox.DataStep = 10000;
     MaxFrequencyOffsetTextBox.Coefficient = 0.001;
     MaxFrequencyOffsetTextBox.X = 14;
     MaxFrequencyOffsetTextBox.Y = 1;
@@ -266,8 +193,8 @@ void InitMenu(void)
     MaxPressTextBox.Digits = 1;
     Float(MaxPressTextBox.DataMax) = 5.0;
     Float(MaxPressTextBox.DataMin) = 1.0;
-    Float(MaxPressTextBox.DataStep) = 0.1;
     Float(MaxPressTextBox.DataBigStep) = 0.5;
+    Float(MaxPressTextBox.DataStep) = 0.1;
     MaxPressTextBox.X = 7;
     MaxPressTextBox.Y = 2; 
 
@@ -277,9 +204,19 @@ void InitMenu(void)
     StateLabel.Align = GuiDataAlignLeft;
     StateLabel.StringBlockPointer = StateString;
     StateLabel.X = 8;
-    StateLabel.Y = 2; 
+    StateLabel.Y = 2;
+}
 
-// Service Form
+static void InitServiceForm(void)
+{
+    static TextBox SerialNumberTextBox;
+    static TextBox YearTextBox;
+    static TextBox MonthTextBox;
+    static TextBox DayTextBox;
+    static Label IdentifyNumber0Label;
+    static Label IdentifyNumber1Label;
+    static Label IdentifyNumber2Label;
+
     System.Gui.Form.Init(&App.Menu.ServiceForm);
     App.Menu.ServiceForm.BackTextPointer = "出厂编号        "
                                            "出厂日期  :  :  "
@@ -290,8 +227,8 @@ void InitMenu(void)
     SerialNumberTextBox.Type = GuiDataTypeUintDec;
     SerialNumberTextBox.DataMax = 10000;
     SerialNumberTextBox.DataMin = 1;
-    SerialNumberTextBox.DataStep = 1;
     SerialNumberTextBox.DataBigStep = 100;
+    SerialNumberTextBox.DataStep = 1;
     SerialNumberTextBox.X = 15;
     SerialNumberTextBox.Y = 0;
 
@@ -300,8 +237,8 @@ void InitMenu(void)
     YearTextBox.Type = GuiDataTypeIntDec;
     YearTextBox.DataMax = 99;
     YearTextBox.DataMin = 14;
-    YearTextBox.DataStep = 1;
     YearTextBox.DataBigStep = 10;
+    YearTextBox.DataStep = 1;
     YearTextBox.X = 9;
     YearTextBox.Y = 1;
 
@@ -310,8 +247,8 @@ void InitMenu(void)
     MonthTextBox.Type = GuiDataTypeIntDec;
     MonthTextBox.DataMax = 12;
     MonthTextBox.DataMin = 1;
-    MonthTextBox.DataStep = 1;
     MonthTextBox.DataBigStep = 10;
+    MonthTextBox.DataStep = 1;
     MonthTextBox.X = 12;
     MonthTextBox.Y = 1;
 
@@ -320,8 +257,8 @@ void InitMenu(void)
     DayTextBox.Type = GuiDataTypeIntDec;
     DayTextBox.DataMax = 31;
     DayTextBox.DataMin = 1;
-    DayTextBox.DataStep = 1;
     DayTextBox.DataBigStep = 10;
+    DayTextBox.DataStep = 1;
     DayTextBox.X = 15;
     DayTextBox.Y = 1;
    
@@ -345,8 +282,19 @@ void InitMenu(void)
     IdentifyNumber2Label.X = 7;
     IdentifyNumber2Label.Y = 3;
     IdentifyNumber2Label.Digits = 8;
+}
 
-// Time Form
+static void InitTimeForm(void)
+{
+    static TextBox RtcYearTextBox;
+    static TextBox RtcMonthTextBox;
+    static TextBox RtcWeekTextBox;
+    static TextBox RtcDayTextBox;
+    static TextBox RtcHourTextBox;
+    static TextBox RtcMinuteTextBox;
+    static TextBox RtcSecondTextBox;
+    static const string WeekString[] = {"日", "一", "二", "三", "四", "五", "六"};
+    
     System.Gui.Form.Init(&App.Menu.TimeForm);
     App.Menu.TimeForm.BackTextPointer = "    时    间    "
                                         "                "
@@ -357,8 +305,8 @@ void InitMenu(void)
     RtcYearTextBox.Type = GuiDataTypeUshortDec;
     RtcYearTextBox.DataMax = 2100;
     RtcYearTextBox.DataMin = 2000;
-    RtcYearTextBox.DataStep = 1;
     RtcYearTextBox.DataBigStep = 10;
+    RtcYearTextBox.DataStep = 1;
     RtcYearTextBox.X = 5;
     RtcYearTextBox.Y = 2; 
 
@@ -367,8 +315,8 @@ void InitMenu(void)
     RtcMonthTextBox.Type = GuiDataTypeByteDec;
     RtcMonthTextBox.DataMax = 12;
     RtcMonthTextBox.DataMin = 1;
-    RtcMonthTextBox.DataStep = 1;
     RtcMonthTextBox.DataBigStep = 2;
+    RtcMonthTextBox.DataStep = 1;
     RtcMonthTextBox.X = 9;
     RtcMonthTextBox.Y = 2; 
 
@@ -377,8 +325,8 @@ void InitMenu(void)
     RtcDayTextBox.Type = GuiDataTypeByteDec;
     RtcDayTextBox.DataMax = 31;
     RtcDayTextBox.DataMin = 0;
-    RtcDayTextBox.DataStep = 1;
     RtcDayTextBox.DataBigStep = 1;
+    RtcDayTextBox.DataStep = 1;
     RtcDayTextBox.X = 13;
     RtcDayTextBox.Y = 2;
 
@@ -389,8 +337,8 @@ void InitMenu(void)
     RtcWeekTextBox.StringBlockPointer = WeekString;
     RtcWeekTextBox.DataMax = 6;
     RtcWeekTextBox.DataMin = 0;
-    RtcWeekTextBox.DataStep = 1;
     RtcWeekTextBox.DataBigStep = 1;
+    RtcWeekTextBox.DataStep = 1;
     RtcWeekTextBox.X = 4;
     RtcWeekTextBox.Y = 3; 
 
@@ -399,8 +347,8 @@ void InitMenu(void)
     RtcHourTextBox.Type = GuiDataTypeByteDec;
     RtcHourTextBox.DataMax = 59;
     RtcHourTextBox.DataMin = 0;
-    RtcHourTextBox.DataStep = 1;
     RtcHourTextBox.DataBigStep = 1;
+    RtcHourTextBox.DataStep = 1;
     RtcHourTextBox.X = 9;
     RtcHourTextBox.Y = 3; 
 
@@ -409,8 +357,8 @@ void InitMenu(void)
     RtcMinuteTextBox.Type = GuiDataTypeByteDec;
     RtcMinuteTextBox.DataMax = 59;
     RtcMinuteTextBox.DataMin = 0;
-    RtcMinuteTextBox.DataStep = 1;
     RtcMinuteTextBox.DataBigStep = 1;
+    RtcMinuteTextBox.DataStep = 1;
     RtcMinuteTextBox.X = 12;
     RtcMinuteTextBox.Y = 3; 
 
@@ -419,17 +367,36 @@ void InitMenu(void)
     RtcSecondTextBox.Type = GuiDataTypeByteDec;
     RtcSecondTextBox.DataMax = 59;
     RtcSecondTextBox.DataMin = 0;
-    RtcSecondTextBox.DataStep = 1;
     RtcSecondTextBox.DataBigStep = 1;
+    RtcSecondTextBox.DataStep = 1;
     RtcSecondTextBox.X = 15;
     RtcSecondTextBox.Y = 3;
+}
 
-// Port Form
+static void InitPortForm(void)
+{
+    static Label X0Label;
+    static Label X1Label;
+    static Label X2Label;
+    static Label X3Label;
+
+    static TextBox Y0TextBox;
+    static TextBox Y1TextBox;
+    static TextBox Y2TextBox;
+    static TextBox Y3TextBox;
+    static TextBox Y4TextBox;
+    static TextBox Y5TextBox;
+
+    static Label Adc0Label;
+    static Label Adc1Label;
+    static Label Adc2Label;
+    static Label Adc3Label;
+
     System.Gui.Form.Init(&App.Menu.PortForm);
     App.Menu.PortForm.BackTextPointer = "X   :   Y       "
-                                          "A0:     A1:     "
-                                          "A2:     A3:     "
-                                          "                ";
+                                        "A0:     A1:     "
+                                        "A2:     A3:     "
+                                        "                ";
     System.Gui.Form.AddLabel(&App.Menu.PortForm, &X0Label);
     X0Label.DataPointer = (void *)(App.Data.DI.pX0);
     X0Label.Type = GuiDataTypeByteDec;
@@ -461,8 +428,8 @@ void InitMenu(void)
     Y0TextBox.Y = 0;
     Y0TextBox.DataMax = 1;
     Y0TextBox.DataMin = 0;
-    Y0TextBox.DataStep = 1;
     Y0TextBox.DataBigStep = 1;
+    Y0TextBox.DataStep = 1;
 
     System.Gui.Form.AddTextBox(&App.Menu.PortForm, &Y1TextBox);
     Y1TextBox.DataPointer = (void *)(&App.Data.DO.Y1);
@@ -471,8 +438,8 @@ void InitMenu(void)
     Y1TextBox.Y = 0;
     Y1TextBox.DataMax = 1;
     Y1TextBox.DataMin = 0;
-    Y1TextBox.DataStep = 1;
     Y1TextBox.DataBigStep = 1;
+    Y1TextBox.DataStep = 1;
 
     System.Gui.Form.AddTextBox(&App.Menu.PortForm, &Y2TextBox);
     Y2TextBox.DataPointer = (void *)(&App.Data.DO.Y2);
@@ -481,8 +448,8 @@ void InitMenu(void)
     Y2TextBox.Y = 0;
     Y2TextBox.DataMax = 1;
     Y2TextBox.DataMin = 0;
-    Y2TextBox.DataStep = 1;
     Y2TextBox.DataBigStep = 1;
+    Y2TextBox.DataStep = 1;
 
     System.Gui.Form.AddTextBox(&App.Menu.PortForm, &Y3TextBox);
     Y3TextBox.DataPointer = (void *)(&App.Data.DO.Y3);
@@ -491,8 +458,8 @@ void InitMenu(void)
     Y3TextBox.Y = 0;
     Y3TextBox.DataMax = 1;
     Y3TextBox.DataMin = 0;
+    Y3TextBox.DataBigStep = 1;
     Y3TextBox.DataStep = 1;
-    Y0TextBox.DataBigStep = 1;
 
     System.Gui.Form.AddTextBox(&App.Menu.PortForm, &Y4TextBox);
     Y4TextBox.DataPointer = (void *)(&App.Data.DO.Y4);
@@ -501,8 +468,8 @@ void InitMenu(void)
     Y4TextBox.Y = 0;
     Y4TextBox.DataMax = 1;
     Y4TextBox.DataMin = 0;
-    Y4TextBox.DataStep = 1;
     Y4TextBox.DataBigStep = 1;
+    Y4TextBox.DataStep = 1;
 
     System.Gui.Form.AddTextBox(&App.Menu.PortForm, &Y5TextBox);
     Y5TextBox.DataPointer = (void *)(&App.Data.DO.Y5);
@@ -511,8 +478,8 @@ void InitMenu(void)
     Y5TextBox.Y = 0;
     Y5TextBox.DataMax = 1;
     Y5TextBox.DataMin = 0;
-    Y5TextBox.DataStep = 1;
     Y5TextBox.DataBigStep = 1;
+    Y5TextBox.DataStep = 1;
     /***********************************************/
     System.Gui.Form.AddLabel(&App.Menu.PortForm, &Adc0Label);
     Adc0Label.DataPointer = (void *)(App.Data.Adc.pA0);
@@ -537,155 +504,188 @@ void InitMenu(void)
     Adc3Label.Type = GuiDataTypeUshortDec;
     Adc3Label.X = 15;
     Adc3Label.Y = 2;  
+}
 
+static void InitSubPlcForm(void)
+{
+    static Label X0Label;
+    static Label X1Label;
+    static Label X2Label;
+    static Label X3Label;
 
-// SubPlc Form
+    static TextBox Y0TextBox;
+    static TextBox Y1TextBox;
+    static TextBox Y2TextBox;
+    static TextBox Y3TextBox;
+    static TextBox Y4TextBox;
+    static TextBox Y5TextBox;
+
+    static Label Adc0Label;
+    static Label Adc1Label;
+    static Label Adc2Label;
+    static Label Adc3Label;
+    
+    static TextBox Reg1TextBox;
+    static TextBox Reg0TextBox;
+    static TextBox RegTextBox;
+
     System.Gui.Form.Init(&App.Menu.SubPlcForm);
     App.Menu.SubPlcForm.BackTextPointer = "X   :   Y       "
                                           "A0:     A1:     "
                                           "A2:     A3:     "
                                           "                ";
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X0Label1);
-    X0Label1.DataPointer = (void *)(&App.Data.SubPlc.DI.X0);
-    X0Label1.Type = GuiDataTypeByteDec;
-    X0Label1.X = 2;
-    X0Label1.Y = 0; 
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X0Label);
+    X0Label.DataPointer = (void *)(&App.Data.SubPlc.DI.X0);
+    X0Label.Type = GuiDataTypeByteDec;
+    X0Label.X = 2;
+    X0Label.Y = 0; 
     
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X1Label1);
-    X1Label1.DataPointer = (void *)(&App.Data.SubPlc.DI.X1);
-    X1Label1.Type = GuiDataTypeByteDec;
-    X1Label1.X = 3;
-    X1Label1.Y = 0; 
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X1Label);
+    X1Label.DataPointer = (void *)(&App.Data.SubPlc.DI.X1);
+    X1Label.Type = GuiDataTypeByteDec;
+    X1Label.X = 3;
+    X1Label.Y = 0; 
 
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X2Label1);
-    X2Label1.DataPointer = (void *)(&App.Data.SubPlc.DI.X2);
-    X2Label1.Type = GuiDataTypeByteDec;
-    X2Label1.X = 4;
-    X2Label1.Y = 0; 
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X2Label);
+    X2Label.DataPointer = (void *)(&App.Data.SubPlc.DI.X2);
+    X2Label.Type = GuiDataTypeByteDec;
+    X2Label.X = 4;
+    X2Label.Y = 0; 
     
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X3Label1);
-    X3Label1.DataPointer = (void *)(&App.Data.SubPlc.DI.X3);
-    X3Label1.Type = GuiDataTypeByteDec;
-    X3Label1.X = 5;
-    X3Label1.Y = 0; 
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &X3Label);
+    X3Label.DataPointer = (void *)(&App.Data.SubPlc.DI.X3);
+    X3Label.Type = GuiDataTypeByteDec;
+    X3Label.X = 5;
+    X3Label.Y = 0; 
     /***********************************************/
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y0TextBox1);
-    Y0TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y0);
-    Y0TextBox1.Type = GuiDataTypeByteDec;
-    Y0TextBox1.X = 10;
-    Y0TextBox1.Y = 0;
-    Y0TextBox1.DataMax = 1;
-    Y0TextBox1.DataMin = 0;
-    Y0TextBox1.DataStep = 1;
-    Y0TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y0TextBox);
+    Y0TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y0);
+    Y0TextBox.Type = GuiDataTypeByteDec;
+    Y0TextBox.X = 10;
+    Y0TextBox.Y = 0;
+    Y0TextBox.DataMax = 1;
+    Y0TextBox.DataMin = 0;
+    Y0TextBox.DataBigStep = 1;
+    Y0TextBox.DataStep = 1;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y1TextBox1);
-    Y1TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y1);
-    Y1TextBox1.Type = GuiDataTypeByteDec;
-    Y1TextBox1.X = 11;
-    Y1TextBox1.Y = 0;
-    Y1TextBox1.DataMax = 1;
-    Y1TextBox1.DataMin = 0;
-    Y1TextBox1.DataStep = 1;
-    Y1TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y1TextBox);
+    Y1TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y1);
+    Y1TextBox.Type = GuiDataTypeByteDec;
+    Y1TextBox.X = 11;
+    Y1TextBox.Y = 0;
+    Y1TextBox.DataMax = 1;
+    Y1TextBox.DataMin = 0;
+    Y1TextBox.DataBigStep = 1;
+    Y1TextBox.DataStep = 1;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y2TextBox1);
-    Y2TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y2);
-    Y2TextBox1.Type = GuiDataTypeByteDec;
-    Y2TextBox1.X = 12;
-    Y2TextBox1.Y = 0;
-    Y2TextBox1.DataMax = 1;
-    Y2TextBox1.DataMin = 0;
-    Y2TextBox1.DataStep = 1;
-    Y2TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y2TextBox);
+    Y2TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y2);
+    Y2TextBox.Type = GuiDataTypeByteDec;
+    Y2TextBox.X = 12;
+    Y2TextBox.Y = 0;
+    Y2TextBox.DataMax = 1;
+    Y2TextBox.DataMin = 0;
+    Y2TextBox.DataBigStep = 1;
+    Y2TextBox.DataStep = 1;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y3TextBox1);
-    Y3TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y3);
-    Y3TextBox1.Type = GuiDataTypeByteDec;
-    Y3TextBox1.X = 13;
-    Y3TextBox1.Y = 0;
-    Y3TextBox1.DataMax = 1;
-    Y3TextBox1.DataMin = 0;
-    Y3TextBox1.DataStep = 1;
-    Y0TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y3TextBox);
+    Y3TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y3);
+    Y3TextBox.Type = GuiDataTypeByteDec;
+    Y3TextBox.X = 13;
+    Y3TextBox.Y = 0;
+    Y3TextBox.DataMax = 1;
+    Y3TextBox.DataMin = 0;
+    Y3TextBox.DataBigStep = 1;
+    Y3TextBox.DataStep = 1;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y4TextBox1);
-    Y4TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y4);
-    Y4TextBox1.Type = GuiDataTypeByteDec;
-    Y4TextBox1.X = 14;
-    Y4TextBox1.Y = 0;
-    Y4TextBox1.DataMax = 1;
-    Y4TextBox1.DataMin = 0;
-    Y4TextBox1.DataStep = 1;
-    Y4TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y4TextBox);
+    Y4TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y4);
+    Y4TextBox.Type = GuiDataTypeByteDec;
+    Y4TextBox.X = 14;
+    Y4TextBox.Y = 0;
+    Y4TextBox.DataMax = 1;
+    Y4TextBox.DataMin = 0;
+    Y4TextBox.DataBigStep = 1;
+    Y4TextBox.DataStep = 1;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y5TextBox1);
-    Y5TextBox1.DataPointer = (void *)(&App.Data.SubPlc.DO.Y5);
-    Y5TextBox1.Type = GuiDataTypeByteDec;
-    Y5TextBox1.X = 15;
-    Y5TextBox1.Y = 0;
-    Y5TextBox1.DataMax = 1;
-    Y5TextBox1.DataMin = 0;
-    Y5TextBox1.DataStep = 1;
-    Y5TextBox1.DataBigStep = 1;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Y5TextBox);
+    Y5TextBox.DataPointer = (void *)(&App.Data.SubPlc.DO.Y5);
+    Y5TextBox.Type = GuiDataTypeByteDec;
+    Y5TextBox.X = 15;
+    Y5TextBox.Y = 0;
+    Y5TextBox.DataMax = 1;
+    Y5TextBox.DataMin = 0;
+    Y5TextBox.DataBigStep = 1;
+    Y5TextBox.DataStep = 1;
     /***********************************************/
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc0Label1);
-    Adc0Label1.DataPointer = (void *)(&App.Data.SubPlc.Adc.A0);
-    Adc0Label1.Type = GuiDataTypeUshortDec;
-    Adc0Label1.X = 6;
-    Adc0Label1.Y = 1;   
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc0Label);
+    Adc0Label.DataPointer = (void *)(&App.Data.SubPlc.Adc.A0);
+    Adc0Label.Type = GuiDataTypeUshortDec;
+    Adc0Label.X = 6;
+    Adc0Label.Y = 1;   
 
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc1Label1);
-    Adc1Label1.DataPointer = (void *)(&App.Data.SubPlc.Adc.A1);
-    Adc1Label1.Type = GuiDataTypeUshortDec;
-    Adc1Label1.X = 15;
-    Adc1Label1.Y = 1;   
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc1Label);
+    Adc1Label.DataPointer = (void *)(&App.Data.SubPlc.Adc.A1);
+    Adc1Label.Type = GuiDataTypeUshortDec;
+    Adc1Label.X = 15;
+    Adc1Label.Y = 1;   
 
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc2Label1);
-    Adc2Label1.DataPointer = (void *)(&App.Data.SubPlc.Adc.A2);
-    Adc2Label1.Type = GuiDataTypeUshortDec;
-    Adc2Label1.X = 6;
-    Adc2Label1.Y = 2;   
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc2Label);
+    Adc2Label.DataPointer = (void *)(&App.Data.SubPlc.Adc.A2);
+    Adc2Label.Type = GuiDataTypeUshortDec;
+    Adc2Label.X = 6;
+    Adc2Label.Y = 2;   
 
-    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc3Label1);
-    Adc3Label1.DataPointer = (void *)(&App.Data.SubPlc.Adc.A3);
-    Adc3Label1.Type = GuiDataTypeUshortDec;
-    Adc3Label1.X = 15;
-    Adc3Label1.Y = 2; 
+    System.Gui.Form.AddLabel(&App.Menu.SubPlcForm, &Adc3Label);
+    Adc3Label.DataPointer = (void *)(&App.Data.SubPlc.Adc.A3);
+    Adc3Label.Type = GuiDataTypeUshortDec;
+    Adc3Label.X = 15;
+    Adc3Label.Y = 2; 
     /***********************************************/
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Reg1TextBox1);
-    Reg1TextBox1.DataPointer = (void *)((ushort*)&App.Data.SubPlc.Reg + 1);
-    Reg1TextBox1.Type = GuiDataTypeUshortHex;
-    Reg1TextBox1.X = 3;
-    Reg1TextBox1.Y = 3;
-    Reg1TextBox1.DataMax = 0xFFFF;
-    Reg1TextBox1.DataMin = 0;
-    Reg1TextBox1.DataStep = 1;
-    Reg1TextBox1.DataBigStep = 0x10;
-    Reg1TextBox1.Digits = 4;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Reg1TextBox);
+    Reg1TextBox.DataPointer = (void *)((ushort*)&App.Data.SubPlc.Reg + 1);
+    Reg1TextBox.Type = GuiDataTypeUshortHex;
+    Reg1TextBox.X = 3;
+    Reg1TextBox.Y = 3;
+    Reg1TextBox.DataMax = 0xFFFF;
+    Reg1TextBox.DataMin = 0;
+    Reg1TextBox.DataBigStep = 0x10;
+    Reg1TextBox.DataStep = 1;
+    Reg1TextBox.Digits = 4;
 
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Reg0TextBox1);
-    Reg0TextBox1.DataPointer = (void *)((ushort*)&App.Data.SubPlc.Reg);
-    Reg0TextBox1.Type = GuiDataTypeUshortHex;
-    Reg0TextBox1.X = 7;
-    Reg0TextBox1.Y = 3;
-    Reg0TextBox1.DataMax = 0xFFFF;
-    Reg0TextBox1.DataMin = 0;
-    Reg0TextBox1.DataStep = 1;
-    Reg0TextBox1.DataBigStep = 0x10;
-    Reg0TextBox1.Digits = 4;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &Reg0TextBox);
+    Reg0TextBox.DataPointer = (void *)((ushort*)&App.Data.SubPlc.Reg);
+    Reg0TextBox.Type = GuiDataTypeUshortHex;
+    Reg0TextBox.X = 7;
+    Reg0TextBox.Y = 3;
+    Reg0TextBox.DataMax = 0xFFFF;
+    Reg0TextBox.DataMin = 0;
+    Reg0TextBox.DataBigStep = 0x10;
+    Reg0TextBox.DataStep = 1;
+    Reg0TextBox.Digits = 4;
     
-    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &RegTextBox1);
-    RegTextBox1.DataPointer = (void *)(&App.Data.SubPlc.Reg);
-    RegTextBox1.Type = GuiDataTypeIntDec;
-    RegTextBox1.X = 15;
-    RegTextBox1.Y = 3;
-    RegTextBox1.DataMax = 999999;
-    RegTextBox1.DataMin = 0;
-    RegTextBox1.DataStep = 1;
-    RegTextBox1.DataBigStep = 10;
+    System.Gui.Form.AddTextBox(&App.Menu.SubPlcForm, &RegTextBox);
+    RegTextBox.DataPointer = (void *)(&App.Data.SubPlc.Reg);
+    RegTextBox.Type = GuiDataTypeIntDec;
+    RegTextBox.X = 15;
+    RegTextBox.Y = 3;
+    RegTextBox.DataMax = 999999;
+    RegTextBox.DataMin = 0;
+    RegTextBox.DataBigStep = 10;
+    RegTextBox.DataStep = 1;
 }
 
+void InitMenu(void)
+{
+    InitLogoForm();
+    InitCheckForm();
+    InitWorkForm();
+    InitSetupForm();
+    InitServiceForm();
+    InitTimeForm();
+    InitPortForm();
+    InitSubPlcForm();
+}
 /*******************************************************************************
 * 函数名	: MenuTask
 * 描述	    : MenuTask任务，必须为最低优先级任务，解析窗体Form内的各个控件用于显示

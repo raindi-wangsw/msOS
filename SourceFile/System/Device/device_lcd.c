@@ -34,10 +34,10 @@
 #include "system.h"
 
 
-#define PinClk	    PcOut(7)
-#define PinCs	    PcOut(9)
-#define PinData	    PcOut(8)
-#define PinReset	PcOut(6)
+static uint * pPinClk;
+static uint * pPinCs;
+static uint * pPinData;
+static uint * pPinReset;
 
 const char Array[4] = 
 {
@@ -50,22 +50,22 @@ static void SendInstruct(byte instruct)
 
     variable = 0x00F80000 | ((instruct & 0xF0) << 8) |((instruct & 0x0F) << 4); 
 
-    PinClk = 0;	
-    PinCs = 1;
+    *pPinClk = 0;	
+    *pPinCs = 1;
     
     for (i = 23; i > -1; i--) 
     {
         if(GetBit(variable, i)) 
-            PinData = 1;
+            *pPinData = 1;
         else 
-            PinData = 0;
+            *pPinData = 0;
         DelayUs(10);     // 7不能正常工作，考虑余量，取10
-        PinClk = 1;
+        *pPinClk = 1;
         DelayUs(10);
-        PinClk = 0;
+        *pPinClk = 0;
         DelayUs(10);
     }
-    PinCs = 0;
+    *pPinCs = 0;
 }
 
 static void SendData(byte data)
@@ -74,22 +74,22 @@ static void SendData(byte data)
     uint variable;
     variable = 0x00FA0000 | ((data & 0xF0) << 8) |((data & 0x0F) << 4); 
 
-    PinClk = 0;
-    PinCs = 1;
+    *pPinClk = 0;
+    *pPinCs = 1;
 
     for (i = 23; i > -1; i--) 
     {
         if (GetBit(variable, i)) 
-            PinData = 1;
+            *pPinData = 1;
         else 
-            PinData = 0;
+            *pPinData = 0;
         DelayUs(10);
-        PinClk = 1;
+        *pPinClk = 1;
         DelayUs(10);
-        PinClk = 0;
+        *pPinClk = 0;
         DelayUs(10);
     }
-    PinCs = 0;
+    *pPinCs = 0;
 }
 
 
@@ -140,29 +140,35 @@ void InitLcd(void)
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    PinClk = 0;
+    
+    pPinClk = (uint *)BitBand(GPIOC_ODR_ADDR, 7);
+    pPinCs = (uint *)BitBand(GPIOC_ODR_ADDR, 9);
+    pPinData = (uint *)BitBand(GPIOC_ODR_ADDR, 8);
+    pPinReset = (uint *)BitBand(GPIOC_ODR_ADDR, 6);
+    
+    *pPinClk = 0;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-    PinCs = 0;
+    *pPinCs = 0;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; 
     GPIO_Init(GPIOC, &GPIO_InitStructure);	
-    PinData = 0;
+    *pPinData = 0;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; 
     GPIO_Init(GPIOC, &GPIO_InitStructure);	
-    PinReset = 0;
+    *pPinReset = 0;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; 
     GPIO_Init(GPIOC, &GPIO_InitStructure);	
     	
     DelayMs(100);
-    PinReset = 1;
+    *pPinReset = 1;
     
     SendInstruct(0x30);
     SendInstruct(0x0C);

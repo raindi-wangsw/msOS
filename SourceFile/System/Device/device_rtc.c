@@ -103,12 +103,15 @@ static void GetDate(void)
         
     dayInFourYear = day % DayInFourYear;
 
-    AppDataPointer->Rtc.Year = year + (day / DayInFourYear) * 4 + dayInFourYear / 365;
+    if (AppDataPointer->Rtc.Year % 4 == 0)
+        AppDataPointer->Rtc.Year = year + (day / DayInFourYear) * 4 + dayInFourYear / 366;
+    else 
+        AppDataPointer->Rtc.Year = year + (day / DayInFourYear) * 4 + dayInFourYear / 365;
 
     if (dayInFourYear > 1095)
     {
         day = dayInFourYear - 1095;
-        while (day > DaysInLeapMonthTable[month])
+        while (day >= DaysInLeapMonthTable[month])
         {
             day = day - DaysInLeapMonthTable[month];
             month++;
@@ -117,7 +120,7 @@ static void GetDate(void)
     else
     {
         day = dayInFourYear % 365;
-        while (day > DaysInNonLeapMonthTable[month])
+        while (day >= DaysInNonLeapMonthTable[month])
         {
             day = day - DaysInNonLeapMonthTable[month];
             month++;
@@ -168,10 +171,10 @@ static void RTC_Config(void)
 
 void RtcSystick100Routine(void)
 {
-    static byte counter;
-    if (++counter == 100)
+    static byte Counter;
+    if (++Counter == 100)
     {
-        counter = 0;
+        Counter = 0;
 
         SetDate();
         GetDate();

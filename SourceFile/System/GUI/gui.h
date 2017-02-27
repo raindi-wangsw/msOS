@@ -99,6 +99,15 @@ typedef struct TextBoxSelf
     int DataBigStep;
 }TextBox;
 
+typedef struct MessageSelf
+{
+    bool Valid;
+    byte X;
+    byte Y;
+    byte Len;
+    char Buffer[16];
+}Message;
+
 typedef struct
 {
     const byte* BackTextPointer;

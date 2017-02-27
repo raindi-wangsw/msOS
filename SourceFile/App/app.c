@@ -38,7 +38,8 @@ AppStruct App;
 *******************************************************************************/
 static void InitData(void)
 {
-    AppDataPointer = &(App.Data);
+    AppDataPointer = &App.Data;
+    AppMenuPointer = &App.Menu;
     
     App.Data.Frequency = 800000;
     App.Data.PowerPercent = 20;

@@ -29,11 +29,19 @@
 
 #include "system.h"
 
+#define MessageSum 8
+
 static char VirtualLcd[4][16];
 static char GuiLcd[4][16];
+static Message MessageBuffer[MessageSum];
 
 static Form * FocusFormPointer;
 
+/*******************************************************************************
+* 描述	    : 标签解析代码
+* 输入参数  : labelPointer 标签指针
+* 说明      : sprintf变量支持int和double类型,其它数据类型，尽可能转化为这两者
+*******************************************************************************/
 static void LabelToGuiLcd(Label * labelPointer)
 {
     byte len, x, y;
@@ -268,6 +276,20 @@ static void ParseTextBox(void)
         textBoxPointer = textBoxPointer->NextTextBoxPointer;
     }
 }
+static void ParseMessage(void)
+{
+    int i;
+    Message * pointer;
+    pointer = &MessageBuffer[0];
+    for (i = 0; i < MessageSum; i++)
+    {
+        if (pointer->Valid)
+        {
+            memcpy(&GuiLcd[pointer->Y][pointer->X], pointer->Buffer, pointer->Len);
+        }
+        pointer++;
+    }
+}
 
 /*******************************************************************************
 * 描述	    : LCD屏数据更新，发现显示数据有变化，按行更新LCD屏内容
@@ -334,6 +356,7 @@ static void Parse(Form * formPointer)
     ParseLabel();               //标签控件扫描解析
 
     ParseTextBox();             //文本控件扫描解析
+    ParseMessage();
 
     Update();                   //更新LCD显示内容
 }
@@ -365,6 +388,7 @@ static void AddLabel(Form * formPointer, Label *labelPointer)
     labelPointer->Coefficient = 1;
     
     labelPointer->StringBlockPointer = null;
+    labelPointer->Align = GuiDataAlignRight;
     labelPointer->NextLabelPointer = formPointer->LabelPointer;
     formPointer->LabelPointer = labelPointer;
 }
@@ -390,6 +414,7 @@ static void AddTextBox(Form * formPointer, TextBox *textBoxPointer)
     textBoxPointer->Coefficient = 1;
     
     textBoxPointer->StringBlockPointer = null;
+    textBoxPointer->Align = GuiDataAlignRight;
     textBoxPointer->NextTextBoxPointer = null;
 
     if (formPointer->TextBoxPointer == null)
@@ -404,6 +429,29 @@ static void AddTextBox(Form * formPointer, TextBox *textBoxPointer)
         pointer = pointer->NextTextBoxPointer;
 
     pointer->NextTextBoxPointer = textBoxPointer;
+}
+
+static void AddMessage(int id, int x, int y, char *fmt, ...)
+{
+    int len;
+    va_list list;
+
+    va_start(list, fmt);
+    len = vsprintf(MessageBuffer[id].Buffer, fmt, list);
+    va_end(list);
+
+    if (len == 0) return;
+    if (id >= MessageSum) return;
+
+    MessageBuffer[id].X = x;
+    MessageBuffer[id].Y = y;
+    MessageBuffer[id].Len = len;
+    MessageBuffer[id].Valid = true;
+}
+
+static void DeleteMessage(int id)
+{
+    MessageBuffer[id].Valid = false;
 }
 
 /*******************************************************************************
@@ -583,6 +631,10 @@ void InitGui(void)
     System.Gui.Form.SwitchTextBoxFocus = SwitchTextBoxFocus;
 
     System.Gui.Form.ModifyTextBoxData = ModifyTextBoxData;
+
+    System.Gui.Form.AddMessage = AddMessage;
+    
+    System.Gui.Form.DeleteMessage = DeleteMessage;
 }
 
 

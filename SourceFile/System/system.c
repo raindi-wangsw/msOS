@@ -33,6 +33,7 @@ ushort CriticalNesting = 0;
 uint RomBase;
 uint RamBase;
 DataStruct * AppDataPointer;
+MenuStruct * AppMenuPointer;
 
 static const byte HextoAscii[16] = 
 {
@@ -80,7 +81,7 @@ byte HexToAscii(byte hex)
 *******************************************************************************/
 void PostMessage(MessageEnum message, uint data)
 {
-    Byte3(data) = message;
+    data |= message << 24;
     System.OS.PostMessageQueue(data);	
 }
 

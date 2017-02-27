@@ -29,19 +29,26 @@
 #define __APP_H
 
 
-#include "logic.h"
+
 
 #include "data.h"
-#include "menu.h"
+
 
 typedef struct
 {
     DataStruct Data;
     MenuStruct Menu;
-
 }AppStruct;
 
 extern AppStruct App;
+
+extern void KeyProcess(KeyEnum key);
+
+extern void LogicTask(void);
+
+extern void InitMenu(void);
+
+extern void MenuTask (void);
 
 #endif /*__APP_H*/
 

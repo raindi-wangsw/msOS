@@ -66,6 +66,18 @@ typedef struct
     SubPlcStruct SubPlc;
 }DataStruct;
 
+typedef struct
+{
+    Form LogoForm;
+    Form CheckForm;
+    Form WorkForm;
+    Form SetupForm;
+    Form ServiceForm;
+    Form TimeForm;
+    Form PortForm;
+    Form SubPlcForm;
+    Form * FocusFormPointer;
+}MenuStruct;
 
 #endif /*__Data_H*/
 

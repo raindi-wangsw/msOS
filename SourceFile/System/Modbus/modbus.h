@@ -30,14 +30,13 @@
 #ifndef __MODBUS_H
 #define __MODBUS_H
 
-#define ReadDo0x        0x01    // 读0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问,最多2000bit
 #define ReadDi1x        0x02    // 读1X地址:10001~19999,PLC数字输入端口(触点)，比特访问,最多2000bit
+#define ReadDo0x        0x01    // 读0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问,最多2000bit
 #define ReadAdc3x       0x04    // 读3X地址:30001~39999,PLC模拟输入端口(寄存器)，16bit访问,最多125
 #define ReadReg4x       0x03    // 读4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多125
 
 #define WriteOneDo0x    0x05    // 写单个0X地址:00001~09999,PLC数字输出端口(线圈)，比特访问
 #define WriteOneReg4x   0x06    // 写单个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问
-
 #define WriteDo0x       0x0F    // 写多个0X地址:00000~09999,PLC数字输出端口(线圈)，比特访问,最多1968bit
 #define WriteReg4x      0x10    // 写多个4X地址:40001~49999,PLC内部寄存器(寄存器)，16bit访问,最多120
 

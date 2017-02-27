@@ -30,7 +30,7 @@
 
 #include "system.h"
 
-#define TimeoutSum                  2
+#define RxdTimeoutSum                  2
 
 #define TxdBufferSum                256
 #define RxdBufferSum                256
@@ -81,8 +81,8 @@ static struct
 
 static struct
 {
-    Word Reg0Word;
-    Word Reg1Word;
+    Word R0Word;
+    Word R1Word;
 }Reg;
 
 static struct
@@ -197,17 +197,17 @@ static void InitHostData(void)
     Adc.A3Word.DataPointer = &AppDataPointer->SubPlc.Adc.A3;
     Adc.A3Word.NextWordPointer = null;
     /***********************************************/
-    Reg.Reg0Word.ID = 1;
-    Reg.Reg0Word.Address = 0;
-    Reg.Reg0Word.Data = 1;
-    Reg.Reg0Word.DataPointer = (ushort *)&AppDataPointer->SubPlc.Reg;
-    Reg.Reg0Word.NextWordPointer = &Reg.Reg1Word;
+    Reg.R0Word.ID = 1;
+    Reg.R0Word.Address = 0;
+    Reg.R0Word.Data = 1;
+    Reg.R0Word.DataPointer = (ushort *)&AppDataPointer->SubPlc.Reg;
+    Reg.R0Word.NextWordPointer = &Reg.R1Word;
 
-    Reg.Reg1Word.ID = 1;
-    Reg.Reg1Word.Address = 1;
-    Reg.Reg1Word.Data = 1;
-    Reg.Reg1Word.DataPointer = (ushort *)&AppDataPointer->SubPlc.Reg + 1;
-    Reg.Reg1Word.NextWordPointer = null; 
+    Reg.R1Word.ID = 1;
+    Reg.R1Word.Address = 1;
+    Reg.R1Word.Data = 1;
+    Reg.R1Word.DataPointer = (ushort *)&AppDataPointer->SubPlc.Reg + 1;
+    Reg.R1Word.NextWordPointer = null; 
 }
 
 
@@ -258,8 +258,6 @@ static void ParseDi(void)
         TxdNode.Type = 1;
         TxdNode.Number = 0;
     }
-
-    
 }
 
 static void ParseDo(void)
@@ -487,7 +485,7 @@ static void ParseReg(void)
 static void ParseObject(void)
 {
     int i;
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++)                     // 寻找当前处理节点
     {
         if (((ushort *)&Sum)[TxdNode.Type] == 0) 
         {
@@ -736,7 +734,7 @@ static void SystickRoutine(void)
     if (RxdState == yes)
     {
         RxdTimeout++;
-        if (RxdTimeout > TimeoutSum)
+        if (RxdTimeout > RxdTimeoutSum)
         {
             RxdState = no;
             System.Device.Usart1.Write(RxdBuffer, RxdCounter);

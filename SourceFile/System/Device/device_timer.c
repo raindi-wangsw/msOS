@@ -103,13 +103,12 @@ static void Start(int id, TimerModeEnum mode, int times, function functionPointe
 /*******************************************************************************
 * 描述	    : 停止某一路的软件定时器
 * 输入参数  : id为0、1、2...
-* 返回值    : bool类型，true为关闭并没有回调产生，false输入参数错误或者已经关闭
+* 返回值    : 无
 *******************************************************************************/
 static void Stop(int id) 
 {
     ResetBit(State, id);
 }
-
 
 void InitTimer(void)
 {

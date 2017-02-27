@@ -48,11 +48,23 @@ typedef unsigned short      ushort;
 //32bit
 //typedef int               int;
 typedef unsigned int        uint;
-
 //字符串
 typedef char *              string;
 
 typedef unsigned char       bool;
+
+typedef union
+{
+    byte    Byte[2];
+    ushort  Ushort;
+}Union16;
+
+typedef union
+{
+    byte    Byte[4];
+    ushort  Ushort[2];
+    uint    Uint;
+}Union32;
 
 typedef void (*function)(void);
 #define Function(address)   ((function)(address))()
@@ -96,13 +108,13 @@ typedef enum
 #define ResetBit(data, offset)      ((data) &= ~(1U << (offset)))   // 复位
 #define GetBit(data, offset)        (((data) >> (offset)) & 0x01)   // 获取位
 
-#define Byte0(data)                 ((byte *)(&(data)))[0]
-#define Byte1(data)                 ((byte *)(&(data)))[1]
-#define Byte2(data)                 ((byte *)(&(data)))[2]
-#define Byte3(data)                 ((byte *)(&(data)))[3]
+#define Byte0(data)                 ((byte *)(&(data)))[0]          // 不要用于动态变量
+#define Byte1(data)                 ((byte *)(&(data)))[1]          // 不要用于动态变量
+#define Byte2(data)                 ((byte *)(&(data)))[2]          // 不要用于动态变量
+#define Byte3(data)                 ((byte *)(&(data)))[3]          // 不要用于动态变量
 
-#define Ushort0(data)               ((ushort *)(&(data)))[0]
-#define Ushort1(data)               ((ushort *)(&(data)))[1]
+#define Ushort0(data)               ((ushort *)(&(data)))[0]        // 不要用于动态变量
+#define Ushort1(data)               ((ushort *)(&(data)))[1]        // 不要用于动态变量
 
 #define Byte(data)                  *((byte *)(&data)) 
 #define Ushort(data)                *((ushort *)(&data)) 
@@ -128,6 +140,7 @@ extern ushort CriticalNesting;
 extern uint RomBase;
 extern uint RamBase;
 extern DataStruct * AppDataPointer;
+extern MenuStruct * AppMenuPointer;
 
 extern void Delay(int times);
 
@@ -180,6 +193,11 @@ typedef struct
             }Pwm;
         }DO;
 
+        struct Key
+        {
+            void (*Enable)(bool status);
+        }Key;
+        
         struct Misc
         {
             void (*SetBeep)(bool status);
@@ -259,6 +277,8 @@ typedef struct
             void (* Init)(Form *formPointer);
             void (*SwitchTextBoxFocus)(void);
             void (*ModifyTextBoxData)(KeyEnum key);
+            void (*AddMessage)(int id, int x, int y, char *fmt, ...);
+            void (*DeleteMessage)(int id);
         }Form;
     }Gui;
 }SystemStruct;

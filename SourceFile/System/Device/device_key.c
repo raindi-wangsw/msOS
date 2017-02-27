@@ -31,29 +31,29 @@
 #include "drive.h"
 #include "system.h"
 
-#define PinBeep PaOut(4)
 
-#define PinX0	PbOut(5)
-#define PinX1	PbOut(4)
+static uint * pPinBeep;
+static uint * pPinX0;
+static uint * pPinX1;
+static uint * pPinX2;
+static uint * pPinX3;
+static uint * pPinY0;
+static uint * pPinY1;
 
-#define PinY0	PcIn(10)
-#define PinY1	PcIn(11)
-#define PinY2	PcIn(12)
-#define PinY3	PdIn(2)
+#define ShortInterval       2		// 
+#define LongInterval        20		// ??????
+#define InvalidInterval     2       // ??????
+#define DoubleHitInterval   10		// ?????????
+#define KeyBeepInterval     10      // ?????
 
-#define ShortInterval       4		// 短按按键间隔，不得低于3
-#define LongInterval        40		// 长按按键间隔
-#define InvalidInterval     4       // 无效识别长度
-#define DoubleHitInterval   20		// 防连续双击误动间隔
-#define KeyBeepInterval     20      // 按键音长度
-
-static byte ScanData[3];
+static byte Scan = invalid;
+static byte ScanData;
 
 static byte ValidCounter = 0;
 static byte InvalidCounter = 0;
 static byte DoubleHitCounter = 0;
 static byte KeyBeepCounter = 0;
-
+static bool Enable = false;
 
 
 static byte RemapKey(byte scan) 
@@ -88,135 +88,132 @@ static byte RemapLongKey(byte scan)
     }	
 }
 
-static byte ScanPin(void)
+static void EnableKey(bool status)
 {
-    byte scan = invalid;
-    
-    if(PinY3 == 0)  scan &= 0x7F;
-    if(PinY2 == 0)  scan &= 0xBF;
-    if(PinY1 == 0)  scan &= 0xDF;
-    if(PinY0 == 0)  scan &= 0xEF;
-    
-    PinX0 = 0;
-    PinX1 = 1;
-    
-    DelayUs(1);
-    if(PinY3 == 0)  scan &= 0xF7;
-    if(PinY2 == 0)  scan &= 0xFB;
-    if(PinY1 == 0)  scan &= 0xFD;
-    if(PinY0 == 0)  scan &= 0xFE;
-    
-    PinX1 = 0;
-    PinX0 = 1;
-
-    return(scan);
+    Enable = status;
 }
 
-
-/*******************************************************************************
-* 描述	    : 系统节拍100/S，即10mS一次扫描获取按键值，在多次检测确认后，
-*           : 发送按键的映射消息到LogicTask的消息队列中。
-*******************************************************************************/
 void KeySystick100Routine(void) 
 {
-    byte scan;
     byte key;
-
-    if (KeyBeepCounter == 1) PinBeep = 0;
-    if (KeyBeepCounter > 0) KeyBeepCounter--;
-
-    scan = ScanPin();
-	
-    if (scan != invalid) 
+    static bool Switch = false;
+    Switch = ~Switch;
+    if (Switch)
     {
-        ValidCounter++;
-        InvalidCounter = 0;
-		
-        if (ValidCounter == 1) 
-            ScanData[0] = scan;
-        else if(ValidCounter == 2)
-            ScanData[1] = scan;
-        else if(ValidCounter == 3)
-            ScanData[2] = scan;
-        else if (ValidCounter > LongInterval) 
-            ValidCounter = LongInterval;
+        key = invalid;
+        
+        if(*pPinX3 == 0)  key &= 0x7F;
+        if(*pPinX2 == 0)  key &= 0xBF;
+        if(*pPinX1 == 0)  key &= 0xDF;
+        if(*pPinX0 == 0)  key &= 0xEF;
+        
+        *pPinY0 = 0;
+        *pPinY1 = 1;
+        
+        Delay(1);
+        if(*pPinX3 == 0)  key &= 0xF7;
+        if(*pPinX2 == 0)  key &= 0xFB;
+        if(*pPinX1 == 0)  key &= 0xFD;
+        if(*pPinX0 == 0)  key &= 0xFE;
+        
+        *pPinY1 = 0;
+        *pPinY0 = 1;
+
+        if (Enable)
+            Scan = key;
+        else
+            Scan = invalid;
     }
     else
-	{
-        InvalidCounter++;
-        if (InvalidCounter >= InvalidInterval)
-        {   
-            InvalidCounter = InvalidInterval;
-       
-            if(DoubleHitCounter)
-            {
-                DoubleHitCounter--;
-                ValidCounter = 0;
-                return;
-            }
-
-            if (ValidCounter < ShortInterval) return;
-
-            if (ScanData[0] == ScanData[1])
-                key = ScanData[0];
-            else if (ScanData[0] == ScanData[2])
-                key = ScanData[0];
-            else if (ScanData[1] == ScanData[2])
-                key = ScanData[1];
-            else
-            {
-                ValidCounter = 0;
-                return;
-            }
-
-            if (ValidCounter == LongInterval) 
-                key = RemapLongKey(key);
-            else if (ValidCounter >= ShortInterval) 
-                key = RemapKey(key);
-            else
-                key = invalid;
+    {
+        if (KeyBeepCounter == 1) *pPinBeep = 0;
             
-            if (key != invalid)
-            {
-                PostMessage(MessageKey, key);  
-                PinBeep = 1;
-                KeyBeepCounter = KeyBeepInterval;
-                DoubleHitCounter = DoubleHitInterval;
-            }
-            ValidCounter = 0;
-    	} 
+        if (KeyBeepCounter > 0) KeyBeepCounter--;
+    	
+        if (Scan != invalid) 
+        {
+            ScanData = Scan;
+            InvalidCounter = 0;
+    		
+            if (++ValidCounter > LongInterval) 
+                ValidCounter = LongInterval;
+        }
+        else
+    	{
+            InvalidCounter++;
+            if (InvalidCounter >= InvalidInterval)
+            {   
+                InvalidCounter = InvalidInterval;
+           
+                if(DoubleHitCounter)
+                {
+                    DoubleHitCounter--;
+                    ValidCounter = 0;
+                    return;
+                }
+
+                if (ValidCounter < ShortInterval) return;
+
+                if (ValidCounter == LongInterval) 
+                    key = RemapLongKey(ScanData);
+                else if (ValidCounter >= ShortInterval) 
+                    key = RemapKey(ScanData);
+                else
+                    key = invalid;
+                
+                if (key != invalid)
+                {
+                    PostMessage(MessageKey, key);  
+                    *pPinBeep = 1;
+                    KeyBeepCounter = KeyBeepInterval;
+                    DoubleHitCounter = DoubleHitInterval;
+                }
+                ValidCounter = 0;
+        	} 
+        }
     }
 }
 
 void InitKey(void)
 {
- 	GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
-
- 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable,ENABLE);
-	PinX1 = 0;
-	PinX0 = 1;
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4 | GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,ENABLE);
     
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
- 	GPIO_Init(GPIOD, &GPIO_InitStructure);
-    
-    PinBeep = 0; 
+    pPinBeep = (uint *)BitBand(GPIOA_ODR_ADDR, 4);
+    pPinX0 = (uint *)BitBand(GPIOC_IDR_ADDR, 10);
+    pPinX1 = (uint *)BitBand(GPIOC_IDR_ADDR, 11);
+    pPinX2 = (uint *)BitBand(GPIOC_IDR_ADDR, 12);
+    pPinX3 = (uint *)BitBand(GPIOD_IDR_ADDR, 2);
+
+    pPinY0 = (uint *)BitBand(GPIOB_ODR_ADDR, 5);
+    pPinY1 = (uint *)BitBand(GPIOB_ODR_ADDR, 4);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD, ENABLE);
+
+    *pPinY1 = 0;
+    *pPinY0 = 1;
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4 | GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    *pPinBeep = 0;
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
- 	GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
     
+    //Input
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOD, &GPIO_InitStructure);
+
+    System.Device.Key.Enable = EnableKey;
 }
 

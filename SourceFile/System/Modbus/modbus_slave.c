@@ -31,7 +31,7 @@
 #include "system.h"
 
 #define DeviceID                    1
-#define TimeoutSum                  2
+#define RxdTimeoutSum               2
 
 #define TxdBufferSum                256
 #define RxdBufferSum                256
@@ -60,14 +60,14 @@ static const ushort * RegBlock[] =              // Register
 };
 //************************************************************************************
 
-static byte TxdBuffer[TxdBufferSum];    // 发送帧环型缓冲区
-static byte RxdBuffer[RxdBufferSum];    // 接收帧数据缓冲区
+static byte TxdBuffer[TxdBufferSum];    // 发送帧Buffer
+static byte RxdBuffer[RxdBufferSum];    // 接收帧Buffer
 
 static bool RxdState;                   // 接收状态
 static ushort RxdCounter;               // 接收计数
 static ushort RxdTimeout;               // 接收超时成帧
-#define GetBool(node) *(bool *)((uint)AppDataPointer + (uint)node)
-#define GetUshort(node) *(ushort *)((uint)AppDataPointer + (uint)node)
+#define GetBool(nodePointer) *(bool *)((uint)AppDataPointer + (uint)nodePointer)
+#define GetUshort(nodePointer) *(ushort *)((uint)AppDataPointer + (uint)nodePointer)
 #define UsartWrite(pointer, sum) System.Device.Usart2.Write(pointer, sum)
 /*************************************************************************************
 * MODBUS主机响应函数
@@ -246,6 +246,7 @@ static void WriteOneDo(ushort address)
 
 /*************************************************************************************
 * 线圈多次写操作命令响应
+* 协议解析不完整，存在只能写8bit数据的缺陷，刚修改了协议解析错误问题。
 *************************************************************************************/
 static void WriteDo(ushort address)
 {
@@ -256,11 +257,11 @@ static void WriteDo(ushort address)
     Byte1(bitSum) = RxdBuffer[4];
     Byte0(bitSum) = RxdBuffer[5];
 
-    pointer = &RxdBuffer[6];
+    pointer = &RxdBuffer[7];
     for (i = 0; i < bitSum; i++)
         GetBool(DoBlock[address + i]) = GetBit(pointer[i >> 3], i & 0x07);
 
-    memcpy(TxdBuffer, RxdBuffer, 6);
+    memcpy(TxdBuffer, RxdBuffer, 7);
 
     Response(TxdBuffer, 6);
 }
@@ -359,49 +360,35 @@ static void ParseRxdFrame(void)
     
     if (crcCalculate != crcReceive) {Reset(); return;}//校验
     
-    Byte1(address) = RxdBuffer[2]; //获取高位地址
-    Byte0(address) = RxdBuffer[3]; //获取低位地址
+    Byte1(address) = RxdBuffer[2];  //获取高位地址
+    Byte0(address) = RxdBuffer[3];  //获取低位地址
     
-    switch(RxdBuffer[1])                       //识别支持的功能码
+    switch(RxdBuffer[1])            //识别支持的功能码
     {
         case ReadDo0x:
             ReadDo(address);
             break;
-            
         case ReadDi1x:
             ReadDi(address);
             break;
-            
         case ReadAdc3x:
             ReadAdc(address);
             break;
-            
         case ReadReg4x:
             ReadReg(address);
             break;
-        
         case WriteOneDo0x:
             WriteOneDo(address);
             break;
-            
         case WriteOneReg4x:
             WriteOneReg(address);
             break;
-
         case WriteDo0x:
             WriteDo(address);
             break;
-            
         case WriteReg4x:
             WriteReg(address);
             break;
-
-        case ReadWriteReg4x:
-            break;
-        case MaskReg:
-            break;
-        case ReadDeviceID:
-            break;  
         default:
             break;
     }
@@ -421,7 +408,7 @@ static void SystickRoutine(void)
     if (RxdState == yes)
     {
         RxdTimeout++;
-        if (RxdTimeout > TimeoutSum)
+        if (RxdTimeout > RxdTimeoutSum)
         {
             RxdState = no;
             ParseRxdFrame();

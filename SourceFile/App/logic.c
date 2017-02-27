@@ -77,6 +77,21 @@ static void StopDefaultProcess(void)
     App.Menu.FocusFormPointer = &App.Menu.WorkForm;
 }
 
+static void TextBoxKeyProcess(KeyEnum key)
+{
+    void * dataPointer;
+    // 以下仅为例子, 用于文本控件值修改后的直接操作，比如可以直接调用函数实现对外操作，非常重要
+    dataPointer = App.Menu.FocusFormPointer->FocusTextBoxPointer->DataPointer;
+    if (dataPointer == &App.Data.Frequency)
+    {
+        ;
+    }
+    else if(dataPointer == &App.Data.PowerPercent)
+    {
+        ;
+    }
+}
+
 static byte Counter = 0;
 /*******************************************************************************
 * 描述	    : 按键消息处理函数
@@ -91,6 +106,7 @@ void KeyProcess(KeyEnum key)
         case KeySub :
         case KeyLongSub:
             System.Gui.Form.ModifyTextBoxData(key);
+            TextBoxKeyProcess(key);
             break;
             
         case KeyAuxUp:              // 写日志(测试)
@@ -186,14 +202,15 @@ void LogicTask(void)
         App.Menu.CheckForm.ChartPointer->Column[i] = i % 5;
     }
     App.Menu.FocusFormPointer = &App.Menu.WorkForm;   
-    
+
+    System.Device.Key.Enable(true);
     //逻辑业务任务获取消息，分配处理
     while(true)
     {     
         message = System.OS.PendMessageQueue();
         
         data = message & 0x00FFFFFF;
-        switch(Byte3(message))
+        switch(message >> 24)
         {
             case MessageKey:                    //按键消息
                 KeyProcess((KeyEnum)data);
