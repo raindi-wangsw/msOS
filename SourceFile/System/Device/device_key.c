@@ -31,20 +31,21 @@
 #include "drive.h"
 #include "system.h"
 
+#define PinBeep PaOut->Bit4
 
-static uint * pPinBeep;
-static uint * pPinX0;
-static uint * pPinX1;
-static uint * pPinX2;
-static uint * pPinX3;
-static uint * pPinY0;
-static uint * pPinY1;
+#define PinX0   PcIn->Bit10
+#define PinX1   PcIn->Bit11
+#define PinX2   PcIn->Bit12
+#define PinX3   PdIn->Bit2
 
-#define ShortInterval       2		// 
-#define LongInterval        20		// ??????
-#define InvalidInterval     2       // ??????
-#define DoubleHitInterval   10		// ?????????
-#define KeyBeepInterval     10      // ?????
+#define PinY0   PbOut->Bit5
+#define PinY1   PbOut->Bit4
+
+#define ShortInterval       2		// 短按间隔
+#define LongInterval        20		// 长按间隔
+#define InvalidInterval     2       // 无效间隔
+#define DoubleHitInterval   10		// 双击间隔
+#define KeyBeepInterval     10      // 按键音响的时间
 
 static byte Scan = invalid;
 static byte ScanData;
@@ -102,22 +103,22 @@ void KeySystick100Routine(void)
     {
         key = invalid;
         
-        if(*pPinX3 == 0)  key &= 0x7F;
-        if(*pPinX2 == 0)  key &= 0xBF;
-        if(*pPinX1 == 0)  key &= 0xDF;
-        if(*pPinX0 == 0)  key &= 0xEF;
+        if(PinX3 == 0)  key &= 0x7F;
+        if(PinX2 == 0)  key &= 0xBF;
+        if(PinX1 == 0)  key &= 0xDF;
+        if(PinX0 == 0)  key &= 0xEF;
         
-        *pPinY0 = 0;
-        *pPinY1 = 1;
+        PinY0 = 0;
+        PinY1 = 1;
         
         Delay(1);
-        if(*pPinX3 == 0)  key &= 0xF7;
-        if(*pPinX2 == 0)  key &= 0xFB;
-        if(*pPinX1 == 0)  key &= 0xFD;
-        if(*pPinX0 == 0)  key &= 0xFE;
+        if(PinX3 == 0)  key &= 0xF7;
+        if(PinX2 == 0)  key &= 0xFB;
+        if(PinX1 == 0)  key &= 0xFD;
+        if(PinX0 == 0)  key &= 0xFE;
         
-        *pPinY1 = 0;
-        *pPinY0 = 1;
+        PinY1 = 0;
+        PinY0 = 1;
 
         if (Enable)
             Scan = key;
@@ -126,7 +127,7 @@ void KeySystick100Routine(void)
     }
     else
     {
-        if (KeyBeepCounter == 1) *pPinBeep = 0;
+        if (KeyBeepCounter == 1) PinBeep = 0;
             
         if (KeyBeepCounter > 0) KeyBeepCounter--;
     	
@@ -164,7 +165,7 @@ void KeySystick100Routine(void)
                 if (key != invalid)
                 {
                     PostMessage(MessageKey, key);  
-                    *pPinBeep = 1;
+                    PinBeep = 1;
                     KeyBeepCounter = KeyBeepInterval;
                     DoubleHitCounter = DoubleHitInterval;
                 }
@@ -179,25 +180,16 @@ void InitKey(void)
     GPIO_InitTypeDef GPIO_InitStructure;
 
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,ENABLE);
-    
-    pPinBeep = (uint *)BitBand(GPIOA_ODR_ADDR, 4);
-    pPinX0 = (uint *)BitBand(GPIOC_IDR_ADDR, 10);
-    pPinX1 = (uint *)BitBand(GPIOC_IDR_ADDR, 11);
-    pPinX2 = (uint *)BitBand(GPIOC_IDR_ADDR, 12);
-    pPinX3 = (uint *)BitBand(GPIOD_IDR_ADDR, 2);
-
-    pPinY0 = (uint *)BitBand(GPIOB_ODR_ADDR, 5);
-    pPinY1 = (uint *)BitBand(GPIOB_ODR_ADDR, 4);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD, ENABLE);
 
-    *pPinY1 = 0;
-    *pPinY0 = 1;
+    PinY1 = 0;
+    PinY0 = 1;
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4 | GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    *pPinBeep = 0;
+    PinBeep = 0;
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;

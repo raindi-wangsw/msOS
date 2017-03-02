@@ -27,7 +27,7 @@
 #include "drive.h"
 #include "system.h"
 
-#define Direct PbOut(8)
+#define Direct PbOut->Bit8
 
 static void Usart3Dummy(byte data){;}
 typedef void (*Rxd3Function)(byte data);

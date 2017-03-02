@@ -46,8 +46,6 @@ static void Config(DoModeEnum mode)
         GPIO_Init(GPIOA, &GPIO_InitStructure);
         
         GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOB, &GPIO_InitStructure);
     }
     else
@@ -61,8 +59,6 @@ static void Config(DoModeEnum mode)
         GPIO_Init(GPIOA, &GPIO_InitStructure); 
         
         GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; 
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_Init(GPIOB, &GPIO_InitStructure); 
     }
 }
@@ -272,12 +268,12 @@ static void SetParameter(PwmEnum channel, int prescaler, int period, int dutyRat
 *******************************************************************************/
 void InitDO(void)
 {    
-    AppDataPointer->DO.pY0 = (bool *)BitBand(GPIOA_ODR_ADDR, 7);   
-    AppDataPointer->DO.pY1 = (bool *)BitBand(GPIOB_ODR_ADDR, 0);
-    AppDataPointer->DO.pY2 = (bool *)BitBand(GPIOB_ODR_ADDR, 1);
-    AppDataPointer->DO.pY3 = (bool *)BitBand(GPIOB_ODR_ADDR, 13);
-    AppDataPointer->DO.pY4 = (bool *)BitBand(GPIOB_ODR_ADDR, 14);
-    AppDataPointer->DO.pY5 = (bool *)BitBand(GPIOB_ODR_ADDR, 15);
+    AppDataPointer->DO.pY0 = (bool *)&PaOut->Bit7;  
+    AppDataPointer->DO.pY1 = (bool *)&PbOut->Bit0;
+    AppDataPointer->DO.pY2 = (bool *)&PbOut->Bit1;
+    AppDataPointer->DO.pY3 = (bool *)&PbOut->Bit13;
+    AppDataPointer->DO.pY4 = (bool *)&PbOut->Bit14;
+    AppDataPointer->DO.pY5 = (bool *)&PbOut->Bit15;
     
     System.Device.DO.Config = Config;
     System.Device.DO.Pwm.Open = Open;

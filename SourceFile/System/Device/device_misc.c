@@ -31,7 +31,7 @@
 
 
 
-#define PinBeep	PaOut(4)
+#define PinBeep	PaOut->Bit4
 
 
 

@@ -27,6 +27,26 @@
 #define __DRIVE_H
 #include "stm32f10x.h"
 
+typedef struct                                  
+{
+    volatile unsigned int Bit0;                                   
+    volatile unsigned int Bit1;                                  
+    volatile unsigned int Bit2;                                
+    volatile unsigned int Bit3;                                 
+    volatile unsigned int Bit4;  
+    volatile unsigned int Bit5;                                   
+    volatile unsigned int Bit6;                                   
+    volatile unsigned int Bit7;                                  
+    volatile unsigned int Bit8;                                
+    volatile unsigned int Bit9;                                 
+    volatile unsigned int Bit10;                               
+    volatile unsigned int Bit11;                                  
+    volatile unsigned int Bit12;                                 
+    volatile unsigned int Bit13;                                  
+    volatile unsigned int Bit14;
+    volatile unsigned int Bit15;    
+}BitBandStruct;
+
 //IO口地址映射
 #define GPIOA_IDR_ADDR    (GPIOA_BASE+8) //0x40010808 
 #define GPIOB_IDR_ADDR    (GPIOB_BASE+8) //0x40010C08 
@@ -47,26 +67,21 @@
 //IO口操作,只对单一的IO口!确保n的值小于16!
 #define BitBand(ioAddress, pinNumber) ((ioAddress & 0xF0000000)+0x2000000+((ioAddress&0xFFFFF)<<5)+(pinNumber<<2)) 
 
-#define PaIn(n)    *((volatile unsigned int  *)BitBand(GPIOA_IDR_ADDR,n))
-#define PaOut(n)   *((volatile unsigned int  *)BitBand(GPIOA_ODR_ADDR,n))
+#define PaIn ((BitBandStruct *)(BitBand(GPIOA_IDR_ADDR, 0)))
+#define PbIn ((BitBandStruct *)(BitBand(GPIOB_IDR_ADDR, 0)))
+#define PcIn ((BitBandStruct *)(BitBand(GPIOC_IDR_ADDR, 0)))
+#define PdIn ((BitBandStruct *)(BitBand(GPIOD_IDR_ADDR, 0)))
+#define PeIn ((BitBandStruct *)(BitBand(GPIOE_IDR_ADDR, 0)))
+#define PfIn ((BitBandStruct *)(BitBand(GPIOF_IDR_ADDR, 0)))
+#define PgIn ((BitBandStruct *)(BitBand(GPIOG_IDR_ADDR, 0)))
 
-#define PbIn(n)    *((volatile unsigned int  *)BitBand(GPIOB_IDR_ADDR,n))
-#define PbOut(n)   *((volatile unsigned int  *)BitBand(GPIOB_ODR_ADDR,n))
-
-#define PcIn(n)    *((volatile unsigned int  *)BitBand(GPIOC_IDR_ADDR,n))
-#define PcOut(n)   *((volatile unsigned int  *)BitBand(GPIOC_ODR_ADDR,n))
-
-#define PdIn(n)    *((volatile unsigned int  *)BitBand(GPIOD_IDR_ADDR,n))
-#define PdOut(n)   *((volatile unsigned int  *)BitBand(GPIOD_ODR_ADDR,n))
-
-#define PeIn(n)    *((volatile unsigned int  *)BitBand(GPIOE_IDR_ADDR,n))
-#define PeOut(n)   *((volatile unsigned int  *)BitBand(GPIOE_ODR_ADDR,n))
-
-#define PfIn(n)    *((volatile unsigned int  *)BitBand(GPIOF_IDR_ADDR,n))
-#define PfOut(n)   *((volatile unsigned int  *)BitBand(GPIOF_ODR_ADDR,n))
-
-#define PgIn(n)    *((volatile unsigned int  *)BitBand(GPIOG_IDR_ADDR,n))
-#define PgOut(n)   *((volatile unsigned int  *)BitBand(GPIOG_ODR_ADDR,n))
+#define PaOut ((BitBandStruct *)(BitBand(GPIOA_ODR_ADDR, 0)))
+#define PbOut ((BitBandStruct *)(BitBand(GPIOB_ODR_ADDR, 0)))
+#define PcOut ((BitBandStruct *)(BitBand(GPIOC_ODR_ADDR, 0)))
+#define PdOut ((BitBandStruct *)(BitBand(GPIOD_ODR_ADDR, 0)))
+#define PeOut ((BitBandStruct *)(BitBand(GPIOE_ODR_ADDR, 0)))
+#define PfOut ((BitBandStruct *)(BitBand(GPIOF_ODR_ADDR, 0)))
+#define PgOut ((BitBandStruct *)(BitBand(GPIOG_ODR_ADDR, 0)))
 
 
 

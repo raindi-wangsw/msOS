@@ -46,7 +46,9 @@ static const byte HextoAscii[16] =
 
 void Delay(int times)
 {
-	while(times--);
+    volatile int counter;
+    counter = times;
+	while(counter--);
 }
 
 void DelayUs(int times)

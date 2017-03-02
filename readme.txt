@@ -168,3 +168,6 @@ V1.3.3.20170227
 1、logic.c中用message >> 24代替原来的Byte3(message),Byte3这种强制类型转换技巧，容易引起编译器优化错误
 2、device_key.c中 InitKey函数 GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST,ENABLE);代替GPIO_PinRemapConfig(GPIO_Remap_SW,J_Disable,ENABLE);解决SWD Debug时关闭SWD而导致无法调试的问题。
 3、编译器默认为MDK5.15，便于JLINK_V9.2调试
+
+V1.3.3.20170302
+1、drive.h中，IO端口做了结构体化的BitBand处理，更便于理解

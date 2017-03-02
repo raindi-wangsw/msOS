@@ -42,10 +42,10 @@ void InitDI(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    AppDataPointer->DI.pX0 = (bool *)BitBand(GPIOC_IDR_ADDR, 0); 
-    AppDataPointer->DI.pX1 = (bool *)BitBand(GPIOC_IDR_ADDR, 1);
-    AppDataPointer->DI.pX2 = (bool *)BitBand(GPIOC_IDR_ADDR, 2);
-    AppDataPointer->DI.pX3 = (bool *)BitBand(GPIOC_IDR_ADDR, 3);
+    AppDataPointer->DI.pX0 = (bool *)&PcIn->Bit0;
+    AppDataPointer->DI.pX1 = (bool *)&PcIn->Bit1;
+    AppDataPointer->DI.pX2 = (bool *)&PcIn->Bit2;
+    AppDataPointer->DI.pX3 = (bool *)&PcIn->Bit3;
     
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
